@@ -1,0 +1,24 @@
+# OS X
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# Node
+node_modules
+
+*.log
+
+*.pem
+*.p12
+
+*.compressed-705357537593286848.gz
+
+/public/bundle-705357537593286848.js
+
+/target
+/test-target

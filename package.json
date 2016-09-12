@@ -1,0 +1,13 @@
+{
+    "name": "minesweeperfus.zizisoft.com",
+    "version": "0.0.0",
+    "private": true,
+    "author": "Zhenzhen Zhan <zhanzhenzhen@hotmail.com>",
+    "dependencies": {
+        "site": "2.11.0",
+        "babel-polyfill": "6.x"
+    },
+    "scripts": {
+        "start": "node target/server.main"
+    }
+}
