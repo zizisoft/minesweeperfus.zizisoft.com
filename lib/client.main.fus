@@ -17,7 +17,7 @@ ui.root
 .setFontFamily(
     "\"Helvetica Neue\", Helvetica, Arial, \"Lucida Grande\", \"Lucida Sans Unicode\", "
     + "\"Lantinghei SC\", \"Microsoft YaHei UI\", \"Microsoft YaHei\", SimHei, sans-serif"
-).setPaint("rgb(51,51,51)").setStrokeWidth(0.06)
+).setPaint("rgb(255,255,255)").setStrokeWidth(0.06)
 
 client.onLoad(<>
     Promise.all[
@@ -44,11 +44,29 @@ client.onLoad(<>
         ")
         document.head.appendChild(woffStyleElement)
 
-        homeScene: ui.Board(
+        homeScene: ui.Stack(
             {backgroundPaint: "rgb(0,0,0)", scale: 0.001}
+            ui.Stack(
+                {grow: 1, shrink: 1}
+                ui.Text(lit.title, {fontSize: 3, textAlignment: "center", width: 1})
+            ) as bar
+            ui.Board{aspectRatio: 1} as board
         )
         sceneBox: ui.SceneBox(homeScene)
         ui.root.add(sceneBox)
+
+        resizeHandler: <>
+            if ui.root.computeWidth() < ui.root.computeHeight()
+                homeScene.setHorizontal(false)
+                bar.setHorizontal(true)
+                board.setSize(1, "auto")
+            else
+                homeScene.setHorizontal(true)
+                bar.setHorizontal(false)
+                board.setSize("auto", 1)
+        ui.onResize(resizeHandler)
+        resizeHandler()
+
         sceneBox.showScene(
             homeScene
             (a, b, box, duration, timingFunction) ->
