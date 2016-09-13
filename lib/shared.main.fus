@@ -1,0 +1,22 @@
+fus 2.1.0
+import "./shared.manifest" all
+
+shared: require("site/shared")
+shared.lits: [
+    {
+        $languages: ["en"]
+        title: "Minesweeper"
+        description: "Minesweeper Game"
+        keywords: "minesweeper, game"
+    }
+    {
+        $languages: ["zh"]
+        title: "扫雷"
+        description: "扫雷游戏"
+        keywords: "扫雷, 游戏"
+    }
+]
+shared.headText: (path, page, lit) ->
+    page.title: lit.title
+    page.description: lit.description
+    page.keywords: lit.keywords

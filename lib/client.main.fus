@@ -1,0 +1,47 @@
+fus 2.1.0
+import "babel-polyfill"
+import "./shared.manifest" all
+
+shared: import "site/shared"
+import "./shared.main"
+client: import "site/client"
+ui: client.ui
+lit: client.lit
+
+parseElement: s -> DOMParser().parseFromString(s, "application/xml").documentElement
+
+if navigator.vendor = "Google Inc." or navigator.vendor = "Apple Computer, Inc."
+    ui.enableAntiFraction()
+ui.setRem(0.018)
+ui.root
+.setFontFamily(
+    "\"Helvetica Neue\", Helvetica, Arial, \"Lucida Grande\", \"Lucida Sans Unicode\", "
+    + "\"Lantinghei SC\", \"Microsoft YaHei UI\", \"Microsoft YaHei\", SimHei, sans-serif"
+).setPaint("rgb(51,51,51)").setStrokeWidth(0.06)
+
+client.onLoad(<>
+    Promise.all[
+        web.binaryGet("/3rd-party/SourceCodePro-Regular.otf.woff")
+        web.binaryGet("/3rd-party/kaushan-script.woff")
+    ].then(x ->
+        sourceCodeProUri: "data:application/font-woff;base64," + x.0.body..toBase64()
+        kaushanScriptUri: "data:application/font-woff;base64," + x.1.body..toBase64()
+        woffStyleElement: parseElement("
+            <style type="text/css" xmlns="http://www.w3.org/1999/xhtml"><![CDATA[
+                @font-face {
+                    font-family: "SourceCodeProWoff";
+                    font-style: normal;
+                    font-weight: 400;
+                    src: url(\(sourceCodeProUri)) format("woff");
+                }
+                @font-face {
+                    font-family: "Kaushan Script";
+                    font-style: normal;
+                    font-weight: 400;
+                    src: local("Kaushan Script"), local("KaushanScript-Regular"), url(\(kaushanScriptUri)) format("woff");
+                }
+            ]]></style>
+        ")
+        document.head.appendChild(woffStyleElement)
+    )
+)
