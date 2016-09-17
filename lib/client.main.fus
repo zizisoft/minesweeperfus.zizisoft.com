@@ -53,17 +53,30 @@ client.onLoad(<>
                     fontSize: 2.4
                     border: {width: "0.1em", paint: "rgb(255,255,255)"}
                     padding: ui.Padding("0.75em", "0.75em")
+                    click: <>
+                        randomBooleans: spread(true, 10).concat(spread(false, 71))..random()
+                        loop(9, x -> loop(9, y ->
+                            internalBoard.(x).(y): randomBooleans.(x * 9 + y)
+                        ))
                 })
             ) as bar
             ui.Board(
                 {aspectRatio: 1}
-                repeat(9, y ->
-                    repeat(9, x -> ui.Text(x.toString(), {x: x / 9, y: y / 9}))
+                repeat(9, x ->
+                    repeat(9, y -> ui.Text("", {x: x / 9, y: y / 9}))
                 )..flatten()
             ) as board
         )
         sceneBox: ui.SceneBox(homeScene)
         ui.root.add(sceneBox)
+
+        internalBoard: repeat(9, <> spread(null, 9))
+        loop(9, x -> loop(9, y ->
+            Observer(<> internalBoard.(x).(y)).onUpdate(event ->
+                console.log(event.value)
+                board.getChildren().(x * 9 + y).setSource(event.value'ok ? event.value.toString() | "n/a")
+            )
+        ))
 
         resizeHandler: <>
             if ui.root.computeWidth() < ui.root.computeHeight()
