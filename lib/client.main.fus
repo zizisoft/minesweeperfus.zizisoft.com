@@ -23,9 +23,9 @@ client.onLoad(<>
     Promise.all[
         web.binaryGet("/3rd-party/SourceCodePro-Regular.otf.woff")
         web.binaryGet("/3rd-party/kaushan-script.woff")
-    ].then(x ->
-        sourceCodeProUri: "data:application/font-woff;base64," + x.0.body..toBase64()
-        kaushanScriptUri: "data:application/font-woff;base64," + x.1.body..toBase64()
+    ].then(resources ->
+        sourceCodeProUri: "data:application/font-woff;base64," + resources.0.body..toBase64()
+        kaushanScriptUri: "data:application/font-woff;base64," + resources.1.body..toBase64()
         woffStyleElement: parseElement("
             <style type="text/css" xmlns="http://www.w3.org/1999/xhtml"><![CDATA[
                 @font-face {
@@ -57,6 +57,9 @@ client.onLoad(<>
             ) as bar
             ui.Board(
                 {aspectRatio: 1}
+                repeat(9, y ->
+                    repeat(9, x -> ui.Text(x.toString(), {x: x / 9, y: y / 9}))
+                )..flatten()
             ) as board
         )
         sceneBox: ui.SceneBox(homeScene)
