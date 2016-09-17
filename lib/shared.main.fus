@@ -8,12 +8,14 @@ shared.lits: [
         title: "Minesweeper"
         description: "Minesweeper Game"
         keywords: "minesweeper, game"
+        newGame: "New Game"
     }
     {
         $languages: ["zh"]
         title: "扫雷"
         description: "扫雷游戏"
         keywords: "扫雷, 游戏"
+        newGame: "新局"
     }
 ]
 shared.headText: (path, page, lit) ->

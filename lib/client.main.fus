@@ -49,6 +49,7 @@ client.onLoad(<>
             ui.Stack(
                 {grow: 1, shrink: 1}
                 ui.Text(lit.title, {fontSize: 3, textAlignment: "center"})
+                ui.Text(lit.newGame, {fontSize: 2.4, textAlignment: "center"})
             ) as bar
             ui.Board{aspectRatio: 1} as board
         )
