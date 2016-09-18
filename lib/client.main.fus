@@ -85,12 +85,22 @@ client.onLoad(<>
                             height: 1 / 9
                             border: ui.Border{width: "0.1rem", paint: "rgb(255,255,255)"}
                             click: <>
-                                if board.(x).(y).hasMine
-                                    board.forEach(m -> m.forEach(n ->
-                                        n.swept: true
-                                    ))
-                                else
-                                    board.(x).(y).swept: true
+                                if not board.(x).(y).swept
+                                    if board.(x).(y).hasMine
+                                        board.forEach(m -> m.forEach(n ->
+                                            n.swept: true
+                                        ))
+                                    else
+                                        board.(x).(y).swept: true
+                                        if board.(x).(y).number = 0
+                                            cells.((x - 1) * 9 + y).onClick.fire()
+                                            cells.((x + 1) * 9 + y).onClick.fire()
+                                            cells.(x * 9 + (y - 1)).onClick.fire()
+                                            cells.(x * 9 + (y + 1)).onClick.fire()
+                                            cells.((x - 1) * 9 + (y - 1)).onClick.fire()
+                                            cells.((x + 1) * 9 + (y - 1)).onClick.fire()
+                                            cells.((x - 1) * 9 + (y + 1)).onClick.fire()
+                                            cells.((x + 1) * 9 + (y + 1)).onClick.fire()
                         }
                         ui.Text("")
                     )
