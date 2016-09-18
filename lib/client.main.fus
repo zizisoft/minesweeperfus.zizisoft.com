@@ -86,8 +86,10 @@ client.onLoad(<>
 
         board: repeat(9, <> repeat(9, <> {hasMine: false, swept: false, number: 0}))
         loop(9, x -> loop(9, y ->
-            Observer(<> board.(x).(y).number).onUpdate(event ->
-                cells.(x * 9 + y).setSource(event.value.toString())
+            Observer(<>
+                board.(x).(y).hasMine.toString() + ":" + board.(x).(y).number.toString()
+            ).onUpdate(event ->
+                cells.(x * 9 + y).setSource(board.(x).(y).hasMine ? "true" | board.(x).(y).number)
             )
         ))
 
