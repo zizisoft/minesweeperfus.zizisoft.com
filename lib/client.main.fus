@@ -56,7 +56,7 @@ client.onLoad(<>
                     click: <>
                         randomBooleans: spread(true, 10).concat(spread(false, 71))..random()
                         loop(9, x -> loop(9, y ->
-                            internalBoard.(x).(y): randomBooleans.(x * 9 + y)
+                            board.(x).(y): randomBooleans.(x * 9 + y)
                         ))
                 })
             ) as bar
@@ -65,14 +65,14 @@ client.onLoad(<>
                 repeat(9, x ->
                     repeat(9, y -> ui.Text("", {x: (x + 0.5) / 9, y: (y + 0.5) / 9}))
                 )..flatten() as cells
-            ) as board
+            ) as uiBoard
         )
         sceneBox: ui.SceneBox(homeScene)
         ui.root.add(sceneBox)
 
-        internalBoard: repeat(9, <> spread(null, 9))
+        board: repeat(9, <> spread(null, 9))
         loop(9, x -> loop(9, y ->
-            Observer(<> internalBoard.(x).(y)).onUpdate(event ->
+            Observer(<> board.(x).(y)).onUpdate(event ->
                 cells.(x * 9 + y).setSource(event.value'ok ? event.value.toString() | "n/a")
             )
         ))
@@ -81,11 +81,11 @@ client.onLoad(<>
             if ui.root.computeWidth() < ui.root.computeHeight()
                 homeScene.setHorizontal(false)
                 bar.setHorizontal(true)
-                board.setSize(1, "auto")
+                uiBoard.setSize(1, "auto")
             else
                 homeScene.setHorizontal(true)
                 bar.setHorizontal(false)
-                board.setSize("auto", 1)
+                uiBoard.setSize("auto", 1)
         ui.onResize(resizeHandler)
         resizeHandler()
 
