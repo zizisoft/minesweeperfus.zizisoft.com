@@ -56,23 +56,24 @@ client.onLoad(<>
                     click: <>
                         randomBooleans: spread(true, 10).concat(spread(false, 71))..random()
                         loop(9, x -> loop(9, y ->
-                            board.(x).(y): randomBooleans.(x * 9 + y)
+                            board.(x).(y).hasMine: randomBooleans.(x * 9 + y)
+                            board.(x).(y).swept: false
                         ))
                 })
             ) as bar
             ui.Board(
                 {aspectRatio: 1}
-                repeat(9, x ->
-                    repeat(9, y -> ui.Text("", {x: (x + 0.5) / 9, y: (y + 0.5) / 9}))
-                )..flatten() as cells
+                repeat(9, x -> repeat(9, y ->
+                    ui.Text("", {x: (x + 0.5) / 9, y: (y + 0.5) / 9})
+                ))..flatten() as cells
             ) as uiBoard
         )
         sceneBox: ui.SceneBox(homeScene)
         ui.root.add(sceneBox)
 
-        board: repeat(9, <> spread(null, 9))
+        board: repeat(9, <> repeat(9, <> {hasMine: null, swept: false}))
         loop(9, x -> loop(9, y ->
-            Observer(<> board.(x).(y)).onUpdate(event ->
+            Observer(<> board.(x).(y).hasMine).onUpdate(event ->
                 cells.(x * 9 + y).setSource(event.value'ok ? event.value.toString() | "n/a")
             )
         ))
