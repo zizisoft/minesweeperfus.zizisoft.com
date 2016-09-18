@@ -81,6 +81,8 @@ client.onLoad(<>
                         {
                             x: (x + 0.5) / 9
                             y: (y + 0.5) / 9
+                            width: 1 / 9
+                            height: 1 / 9
                             click: <>
                                 if board.(x).(y).hasMine
                                     board.forEach(column -> column.forEach(cell ->
@@ -102,7 +104,7 @@ client.onLoad(<>
             Observer(<>
                 board.(x).(y).swept
             ).onUpdate(event ->
-                cells.(x * 9 + y).setSource(
+                cells.(x * 9 + y).getChildren().0.setSource(
                     if event.value
                         board.(x).(y).hasMine ? "true" | board.(x).(y).number
                     else
