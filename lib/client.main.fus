@@ -104,6 +104,9 @@ client.onLoad(<>
                                             fire(x + 1, y - 1)
                                             fire(x - 1, y + 1)
                                             fire(x + 1, y + 1)
+                                        remaining: board..flatten().filter(m -> not m.swept)
+                                        if remaining.length = 10
+                                            alert("success!")
                         }
                         ui.Text("")
                     )
