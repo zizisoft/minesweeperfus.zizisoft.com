@@ -59,6 +59,19 @@ client.onLoad(<>
                             board.(x).(y).hasMine: randomBooleans.(x * 9 + y)
                             board.(x).(y).swept: false
                         ))
+                        getMineCount: (x, y) ->
+                            0 <= x < 9 and 0 <= y < 9 and board.(x).(y).hasMine ? 1 | 0
+                        loop(9, x -> loop(9, y ->
+                            board.(x).(y).number:
+                                getMineCount(x - 1, y)
+                                + getMineCount(x + 1, y)
+                                + getMineCount(x, y - 1)
+                                + getMineCount(x, y + 1)
+                                + getMineCount(x - 1, y - 1)
+                                + getMineCount(x + 1, y - 1)
+                                + getMineCount(x - 1, y + 1)
+                                + getMineCount(x + 1, y + 1)
+                        ))
                 })
             ) as bar
             ui.Board(
@@ -71,10 +84,10 @@ client.onLoad(<>
         sceneBox: ui.SceneBox(homeScene)
         ui.root.add(sceneBox)
 
-        board: repeat(9, <> repeat(9, <> {hasMine: null, swept: false}))
+        board: repeat(9, <> repeat(9, <> {hasMine: false, swept: false, number: 0}))
         loop(9, x -> loop(9, y ->
-            Observer(<> board.(x).(y).hasMine).onUpdate(event ->
-                cells.(x * 9 + y).setSource(event.value'ok ? event.value.toString() | "n/a")
+            Observer(<> board.(x).(y).number).onUpdate(event ->
+                cells.(x * 9 + y).setSource(event.value.toString())
             )
         ))
 
