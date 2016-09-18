@@ -64,7 +64,7 @@ client.onLoad(<>
                 {aspectRatio: 1}
                 repeat(9, x ->
                     repeat(9, y -> ui.Text("", {x: (x + 0.5) / 9, y: (y + 0.5) / 9}))
-                )..flatten()
+                )..flatten() as cells
             ) as board
         )
         sceneBox: ui.SceneBox(homeScene)
@@ -73,7 +73,7 @@ client.onLoad(<>
         internalBoard: repeat(9, <> spread(null, 9))
         loop(9, x -> loop(9, y ->
             Observer(<> internalBoard.(x).(y)).onUpdate(event ->
-                board.getChildren().(x * 9 + y).setSource(event.value'ok ? event.value.toString() | "n/a")
+                cells.(x * 9 + y).setSource(event.value'ok ? event.value.toString() | "n/a")
             )
         ))
 
