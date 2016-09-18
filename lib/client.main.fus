@@ -93,14 +93,17 @@ client.onLoad(<>
                                     else
                                         board.(x).(y).swept: true
                                         if board.(x).(y).number = 0
-                                            cells.((x - 1) * 9 + y).onClick.fire()
-                                            cells.((x + 1) * 9 + y).onClick.fire()
-                                            cells.(x * 9 + (y - 1)).onClick.fire()
-                                            cells.(x * 9 + (y + 1)).onClick.fire()
-                                            cells.((x - 1) * 9 + (y - 1)).onClick.fire()
-                                            cells.((x + 1) * 9 + (y - 1)).onClick.fire()
-                                            cells.((x - 1) * 9 + (y + 1)).onClick.fire()
-                                            cells.((x + 1) * 9 + (y + 1)).onClick.fire()
+                                            fire: (m, n) ->
+                                                if 0 <= m < 9 and 0 <= n < 9
+                                                    cells.(m * 9 + n).onClick.fire()
+                                            fire(x - 1, y)
+                                            fire(x + 1, y)
+                                            fire(x, y - 1)
+                                            fire(x, y + 1)
+                                            fire(x - 1, y - 1)
+                                            fire(x + 1, y - 1)
+                                            fire(x - 1, y + 1)
+                                            fire(x + 1, y + 1)
                         }
                         ui.Text("")
                     )
