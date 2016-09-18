@@ -83,10 +83,11 @@ client.onLoad(<>
                             y: (y + 0.5) / 9
                             width: 1 / 9
                             height: 1 / 9
+                            border: ui.Border{width: "0.1rem", paint: "rgb(255,255,255)"}
                             click: <>
                                 if board.(x).(y).hasMine
-                                    board.forEach(column -> column.forEach(cell ->
-                                        cell.swept: true
+                                    board.forEach(m -> m.forEach(n ->
+                                        n.swept: true
                                     ))
                                 else
                                     board.(x).(y).swept: true
