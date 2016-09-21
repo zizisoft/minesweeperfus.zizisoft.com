@@ -121,7 +121,7 @@ client.onLoad(<>
                             hold: <>
                                 board.(x).(y).flagged: not self
                         }
-                        ui.Text("")
+                        ui.Text({fontSize: 3}, "")
                     )
                 ))..flatten() as cells
             ) as uiBoard
@@ -136,7 +136,7 @@ client.onLoad(<>
             ).onUpdate(event ->
                 cells.(x * 9 + y).getChildren().0.setSource(
                     if event.value
-                        board.(x).(y).hasMine ? "true" | board.(x).(y).number
+                        board.(x).(y).hasMine ? "M" | board.(x).(y).number
                     else
                         ""
                 )
