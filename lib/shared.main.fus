@@ -9,6 +9,7 @@ shared.lits: [
         description: "Minesweeper Game"
         keywords: "minesweeper, game"
         newGame: "New Game"
+        hint: "Click to sweep. Hold to flag."
     }
     {
         $languages: ["zh"]
@@ -16,6 +17,7 @@ shared.lits: [
         description: "扫雷游戏"
         keywords: "扫雷, 游戏"
         newGame: "新局"
+        hint: "点击以扫除，按住以标记。"
     }
 ]
 shared.headText: (path, page, lit) ->
