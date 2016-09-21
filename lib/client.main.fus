@@ -82,48 +82,54 @@ client.onLoad(<>
                                 + getMineCount(x - 1, y + 1)
                                 + getMineCount(x + 1, y + 1)
                         ))
+                        overlay.hide()
                 }) as newGameButton
             ) as bar
             ui.Board(
                 {aspectRatio: 1}
-                repeat(9, x -> repeat(9, y ->
-                    ui.Board(
-                        {
-                            x: (x + 0.5) / 9
-                            y: (y + 0.5) / 9
-                            width: 1 / 9
-                            height: 1 / 9
-                            border: ui.Border{width: "0.1rem", paint: "rgb(255,255,255)"}
-                            holdThreshold: 500
-                            click: <>
-                                if not board.(x).(y).swept
-                                    if board.(x).(y).hasMine
-                                        board.forEach(m -> m.forEach(n ->
-                                            n.swept: true
-                                        ))
-                                    else
-                                        board.(x).(y).swept: true
-                                        if board.(x).(y).number = 0
-                                            fire: (m, n) ->
-                                                if 0 <= m < 9 and 0 <= n < 9
-                                                    cells.(m * 9 + n).onClick.fire()
-                                            fire(x - 1, y)
-                                            fire(x + 1, y)
-                                            fire(x, y - 1)
-                                            fire(x, y + 1)
-                                            fire(x - 1, y - 1)
-                                            fire(x + 1, y - 1)
-                                            fire(x - 1, y + 1)
-                                            fire(x + 1, y + 1)
-                                        remaining: board..flatten().filter(m -> not m.swept)
-                                        if remaining.length = 10
-                                            alert("success!")
-                            hold: <>
-                                board.(x).(y).flagged: not self
-                        }
-                        ui.Text({fontSize: 3}, "")
-                    )
-                ))..flatten() as cells
+                ui.Board(
+                    repeat(9, x -> repeat(9, y ->
+                        ui.Board(
+                            {
+                                x: (x + 0.5) / 9
+                                y: (y + 0.5) / 9
+                                width: 1 / 9
+                                height: 1 / 9
+                                border: ui.Border{width: "0.1rem", paint: "rgb(255,255,255)"}
+                                holdThreshold: 500
+                                click: <>
+                                    if not board.(x).(y).swept
+                                        if board.(x).(y).hasMine
+                                            overlay.show()
+                                            board.forEach(m -> m.forEach(n ->
+                                                n.swept: true
+                                            ))
+                                        else
+                                            board.(x).(y).swept: true
+                                            if board.(x).(y).number = 0
+                                                fire: (m, n) ->
+                                                    if 0 <= m < 9 and 0 <= n < 9
+                                                        cells.(m * 9 + n).onClick.fire()
+                                                fire(x - 1, y)
+                                                fire(x + 1, y)
+                                                fire(x, y - 1)
+                                                fire(x, y + 1)
+                                                fire(x - 1, y - 1)
+                                                fire(x + 1, y - 1)
+                                                fire(x - 1, y + 1)
+                                                fire(x + 1, y + 1)
+                                            remaining: board..flatten().filter(m -> not m.swept)
+                                            if remaining.length = 10
+                                                overlay.show()
+                                                alert("success!")
+                                hold: <>
+                                    board.(x).(y).flagged: not self
+                            }
+                            ui.Text({fontSize: 3}, "")
+                        )
+                    ))..flatten() as cells
+                )
+                ui.Board{backgroundPaint: "rgba(255,0,0,0.1)", visibility: "hidden"} as overlay
             ) as uiBoard
         )
         sceneBox: ui.SceneBox(homeScene)
