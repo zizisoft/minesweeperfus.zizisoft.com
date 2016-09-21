@@ -58,6 +58,7 @@ client.onLoad(<>
                         loop(9, x -> loop(9, y ->
                             board.(x).(y).hasMine: randomBooleans.(x * 9 + y)
                             board.(x).(y).swept: false
+                            board.(x).(y).flagged: false
                         ))
                         getMineCount: (x, y) ->
                             0 <= x < 9 and 0 <= y < 9 and board.(x).(y).hasMine ? 1 | 0
@@ -108,6 +109,8 @@ client.onLoad(<>
                                         remaining: board..flatten().filter(m -> not m.swept)
                                         if remaining.length = 10
                                             alert("success!")
+                            hold: <>
+                                board.(x).(y).flagged: not self
                         }
                         ui.Text("")
                     )
@@ -117,7 +120,7 @@ client.onLoad(<>
         sceneBox: ui.SceneBox(homeScene)
         ui.root.add(sceneBox)
 
-        board: repeat(9, <> repeat(9, <> {hasMine: false, swept: false, number: 0}))
+        board: repeat(9, <> repeat(9, <> {hasMine: false, swept: false, number: 0, flagged: false}))
         loop(9, x -> loop(9, y ->
             Observer(<>
                 board.(x).(y).swept
@@ -128,6 +131,14 @@ client.onLoad(<>
                     else
                         ""
                 )
+            )
+            Observer(<>
+                board.(x).(y).flagged
+            ).onUpdate(event ->
+                if event.value
+                    cells.(x * 9 + y).setBackgroundPaint("rgb(128,128,0)")
+                else
+                    cells.(x * 9 + y).setBackgroundPaint("rgba(0,0,0,0)")
             )
         ))
         newGameButton.onClick.fire()
