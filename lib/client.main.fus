@@ -84,6 +84,7 @@ client.onLoad(<>
                             width: 1 / 9
                             height: 1 / 9
                             border: ui.Border{width: "0.1rem", paint: "rgb(255,255,255)"}
+                            holdThreshold: 500
                             click: <>
                                 if not board.(x).(y).swept
                                     if board.(x).(y).hasMine
