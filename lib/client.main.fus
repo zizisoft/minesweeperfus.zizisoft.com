@@ -82,6 +82,14 @@ client.onLoad(<>
                                 + getMineCount(x - 1, y + 1)
                                 + getMineCount(x + 1, y + 1)
                         ))
+                        loop(9, x -> loop(9, y ->
+                            cells.(x * 9 + y).getChildren().3.setSource(
+                                if board.(x).(y).hasMine
+                                    "M"
+                                else
+                                    board.(x).(y).number
+                            )
+                        ))
                         overlay.hide()
                 }) as newGameButton
             ) as bar
@@ -93,9 +101,9 @@ client.onLoad(<>
                             {
                                 x: (x + 0.5) / 9
                                 y: (y + 0.5) / 9
-                                width: 1 / 9
-                                height: 1 / 9
-                                border: ui.Border{width: "0.1rem", paint: "rgb(255,255,255)"}
+                                width: 1 / 9 * 0.9
+                                height: 1 / 9 * 0.9
+                                rotate3d: {perspective: "5rem", axisAngle: "90deg", angle: "0deg"}
                                 holdThreshold: 500
                                 click: <>
                                     if not board.(x).(y).swept
@@ -125,6 +133,9 @@ client.onLoad(<>
                                 hold: <>
                                     board.(x).(y).flagged: not self
                             }
+                            ui.Text({fontSize: 3}, "M")
+                            ui.Board{backgroundPaint: "rgb(255,0,0)"}
+                            ui.Board{backgroundPaint: "rgb(128,128,128)"}
                             ui.Text({fontSize: 3}, "")
                         )
                     ))..flatten() as cells
@@ -140,20 +151,19 @@ client.onLoad(<>
             Observer(<>
                 board.(x).(y).swept
             ).onUpdate(event ->
-                cells.(x * 9 + y).getChildren().0.setSource(
-                    if event.value
-                        board.(x).(y).hasMine ? "M" | board.(x).(y).number
-                    else
-                        ""
-                )
+                cells.(x * 9 + y).animate{
+                    to: {rotate3d: {
+                        perspective: "5rem"
+                        axisAngle: "90deg"
+                        angle: event.value ? "180deg" | "0deg"
+                    }}
+                    duration: 1000
+                }
             )
             Observer(<>
                 board.(x).(y).flagged
             ).onUpdate(event ->
-                if event.value
-                    cells.(x * 9 + y).setBackgroundPaint("rgb(128,128,0)")
-                else
-                    cells.(x * 9 + y).setBackgroundPaint("rgba(0,0,0,0)")
+                #cells.(x * 9 + y).getChildren().1.setVisibility(event.value)
             )
         ))
         newGameButton.onClick.fire()
