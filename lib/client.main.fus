@@ -83,7 +83,7 @@ client.onLoad(<>
                                 + getMineCount(x + 1, y + 1)
                         ))
                         loop(9, x -> loop(9, y ->
-                            cells.(x * 9 + y).getChildren().3.setSource(
+                            cells.(x * 9 + y).getChildren().2.setSource(
                                 if board.(x).(y).hasMine
                                     "M"
                                 else
@@ -133,7 +133,6 @@ client.onLoad(<>
                                 hold: <>
                                     board.(x).(y).flagged: not self
                             }
-                            ui.Text({fontSize: 3}, "M")
                             ui.Board{backgroundPaint: "rgb(255,0,0)"}
                             ui.Board{backgroundPaint: "rgb(128,128,128)"}
                             ui.Text({fontSize: 3}, "")
