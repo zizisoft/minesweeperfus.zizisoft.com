@@ -83,7 +83,13 @@ client.onLoad(<>
                                 + getMineCount(x + 1, y + 1)
                         ))
                         loop(9, x -> loop(9, y ->
-                            cells.(x * 9 + y).getChildren().2.setSource(
+                            cells.(x * 9 + y).getBackFace().setBackgroundPaint(
+                                if board.(x).(y).hasMine
+                                    "rgb(255,0,0)"
+                                else
+                                    "rgb(64,64,64)"
+                            )
+                            cells.(x * 9 + y).getBackFace().getFirstChild().setSource(
                                 if board.(x).(y).hasMine
                                     "M"
                                 else
@@ -97,13 +103,20 @@ client.onLoad(<>
                 {aspectRatio: 1}
                 ui.Board(
                     repeat(9, x -> repeat(9, y ->
-                        ui.Board(
+                        ui.Flipper(
                             {
                                 x: (x + 0.5) / 9
                                 y: (y + 0.5) / 9
                                 width: 1 / 9 * 0.9
                                 height: 1 / 9 * 0.9
-                                rotate3d: {perspective: "5rem", axisAngle: "90deg", angle: "0deg"}
+                                perspective: "5rem"
+                                orientation: "horizontal"
+                                frontFace: ui.Board(
+                                    {backgroundPaint: "rgb(128,128,128)"}
+                                )
+                                backFace: ui.Board(
+                                    ui.Text({fontSize: 3}, "")
+                                )
                                 holdThreshold: 500
                                 click: <>
                                     if not board.(x).(y).swept
@@ -150,14 +163,8 @@ client.onLoad(<>
             Observer(<>
                 board.(x).(y).swept
             ).onUpdate(event ->
-                cells.(x * 9 + y).animate{
-                    to: {rotate3d: {
-                        perspective: "5rem"
-                        axisAngle: "90deg"
-                        angle: event.value ? "180deg" | "0deg"
-                    }}
-                    duration: 1000
-                }
+                if event.value ≠ cells.(x * 9 + y).isOdd()
+                    cells.(x * 9 + y).flip(1, 1000)
             )
             Observer(<>
                 board.(x).(y).flagged
