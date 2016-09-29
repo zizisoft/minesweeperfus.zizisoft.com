@@ -146,9 +146,6 @@ client.onLoad(<>
                                 hold: <>
                                     board.(x).(y).flagged: not self
                             }
-                            ui.Board{backgroundPaint: "rgb(255,0,0)"}
-                            ui.Board{backgroundPaint: "rgb(128,128,128)"}
-                            ui.Text({fontSize: 3}, "")
                         )
                     ))..flatten() as cells
                 )
