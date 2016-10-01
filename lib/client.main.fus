@@ -55,14 +55,12 @@ client.onLoad(<>
             getCell(pos).setZIndex(1).flip(1, 600).then(checker)
             totalCount: 1
             flippedCount: 0
-            promise: Promise..delay(20)
             loop(9, y -> loop(9, x ->
                 cell: getCell{x: x, y: y}
                 if not (x = pos.x and y = pos.y) and board.(x).(y).swept and not cell.isOdd()
                     totalCount: self + 1
-                    promise: promise.then(<>
+                    Promise..delay(20 * totalCount).then(<>
                         cell.flip(1, 600).then(checker)
-                        Promise..delay(20)
                     )
             ))
         )
@@ -70,18 +68,16 @@ client.onLoad(<>
         restoreCells: <> Promise((resolve, reject) ->
             totalCount: 0
             flippedCount: 0
-            promise: Promise..delay(20)
             loop(9, y -> loop(9, x ->
                 if board.(x).(y).swept
                     cell: getCell{x: x, y: y}
                     totalCount: self + 1
-                    promise: promise.then(<>
+                    Promise..delay(20 * totalCount).then(<>
                         cell.flip(1, 600).then(<>
                             flippedCount: self + 1
                             if flippedCount = totalCount
                                 resolve()
                         )
-                        Promise..delay(20)
                     )
             ))
             if totalCount = 0 then resolve()
