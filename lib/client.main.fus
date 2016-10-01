@@ -181,19 +181,20 @@ client.onLoad(<>
                                             updateCellsAfterSwept{x: x, y: y}
                                         else
                                             sweep: pos ->
-                                                trySweep: p ->
-                                                    if 0 <= p.x < 9 and 0 <= p.y < 9
-                                                        sweep(p)
-                                                board.(pos.x).(pos.y).swept: true
-                                                if board.(pos.x).(pos.y).number = 0
-                                                    trySweep(pos.x - 1, pos.y)
-                                                    trySweep(pos.x + 1, pos.y)
-                                                    trySweep(pos.x, pos.y - 1)
-                                                    trySweep(pos.x, pos.y + 1)
-                                                    trySweep(pos.x - 1, pos.y - 1)
-                                                    trySweep(pos.x + 1, pos.y - 1)
-                                                    trySweep(pos.x - 1, pos.y + 1)
-                                                    trySweep(pos.x + 1, pos.y + 1)
+                                                trySweep: (px, py) ->
+                                                    if 0 <= px < 9 and 0 <= py < 9
+                                                        sweep{x: px, y: py}
+                                                if not board.(pos.x).(pos.y).swept
+                                                    board.(pos.x).(pos.y).swept: true
+                                                    if board.(pos.x).(pos.y).number = 0
+                                                        trySweep(pos.x - 1, pos.y)
+                                                        trySweep(pos.x + 1, pos.y)
+                                                        trySweep(pos.x, pos.y - 1)
+                                                        trySweep(pos.x, pos.y + 1)
+                                                        trySweep(pos.x - 1, pos.y - 1)
+                                                        trySweep(pos.x + 1, pos.y - 1)
+                                                        trySweep(pos.x - 1, pos.y + 1)
+                                                        trySweep(pos.x + 1, pos.y + 1)
                                             sweep{x: x, y: y}
                                             updateCellsAfterSwept{x: x, y: y}
                                             remaining: board..flatten().filter(m -> not m.swept)
