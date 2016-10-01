@@ -44,6 +44,20 @@ client.onLoad(<>
         ")
         document.head.appendChild(woffStyleElement)
 
+        getCell: pos -> cells.(pos.x * 9 + pos.y)
+
+        updateCellsAfterSwept: pos ->
+            getCell(pos).flip(1, 1000)
+            promise: Promise..delay(50)
+            loop(9, x -> loop(9, y ->
+                cell: getCell{x: x, y: y}
+                if not (x = pos.x and y = pos.y) and board.(x).(y).swept and not cell.isOdd()
+                    promise.then(<>
+                        cell.flip(1, 1000)
+                        Promise..delay(50)
+                    )
+            ))
+
         homeScene: ui.Stack(
             {backgroundPaint: "rgb(0,0,0)", scale: 0.001}
             ui.Stack(
@@ -63,40 +77,51 @@ client.onLoad(<>
                     border: {width: "0.1em", paint: "rgb(255,255,255)"}
                     padding: ui.Padding("0.75em", "0.75em")
                     click: <>
-                        randomBooleans: spread(true, 10).concat(spread(false, 71))..random()
+                        promise: Promise..delay(50)
                         loop(9, x -> loop(9, y ->
-                            board.(x).(y).hasMine: randomBooleans.(x * 9 + y)
-                            board.(x).(y).swept: false
-                            board.(x).(y).flagged: false
+                            if board.(x).(y).swept
+                                cell: getCell{x: x, y: y}
+                                promise.then(<>
+                                    cell.flip(1, 1000)
+                                    Promise..delay(50)
+                                )
                         ))
-                        getMineCount: (x, y) ->
-                            0 <= x < 9 and 0 <= y < 9 and board.(x).(y).hasMine ? 1 | 0
-                        loop(9, x -> loop(9, y ->
-                            board.(x).(y).number:
-                                getMineCount(x - 1, y)
-                                + getMineCount(x + 1, y)
-                                + getMineCount(x, y - 1)
-                                + getMineCount(x, y + 1)
-                                + getMineCount(x - 1, y - 1)
-                                + getMineCount(x + 1, y - 1)
-                                + getMineCount(x - 1, y + 1)
-                                + getMineCount(x + 1, y + 1)
-                        ))
-                        loop(9, x -> loop(9, y ->
-                            cells.(x * 9 + y).getBackFace().setBackgroundPaint(
-                                if board.(x).(y).hasMine
-                                    "rgb(255,0,0)"
-                                else
-                                    "rgb(64,64,64)"
-                            )
-                            cells.(x * 9 + y).getBackFace().getFirstChild().setSource(
-                                if board.(x).(y).hasMine
-                                    "M"
-                                else
-                                    board.(x).(y).number
-                            )
-                        ))
-                        overlay.hide()
+                        promise.then(<>
+                            randomBooleans: spread(true, 10).concat(spread(false, 71))..random()
+                            loop(9, x -> loop(9, y ->
+                                board.(x).(y).hasMine: randomBooleans.(x * 9 + y)
+                                board.(x).(y).swept: false
+                                board.(x).(y).flagged: false
+                            ))
+                            getMineCount: (x, y) ->
+                                0 <= x < 9 and 0 <= y < 9 and board.(x).(y).hasMine ? 1 | 0
+                            loop(9, x -> loop(9, y ->
+                                board.(x).(y).number:
+                                    getMineCount(x - 1, y)
+                                    + getMineCount(x + 1, y)
+                                    + getMineCount(x, y - 1)
+                                    + getMineCount(x, y + 1)
+                                    + getMineCount(x - 1, y - 1)
+                                    + getMineCount(x + 1, y - 1)
+                                    + getMineCount(x - 1, y + 1)
+                                    + getMineCount(x + 1, y + 1)
+                            ))
+                            loop(9, x -> loop(9, y ->
+                                cells.(x * 9 + y).getBackFace().setBackgroundPaint(
+                                    if board.(x).(y).hasMine
+                                        "rgb(255,0,0)"
+                                    else
+                                        "rgb(64,64,64)"
+                                )
+                                cells.(x * 9 + y).getBackFace().getFirstChild().setSource(
+                                    if board.(x).(y).hasMine
+                                        "M"
+                                    else
+                                        board.(x).(y).number
+                                )
+                            ))
+                            overlay.hide()
+                        )
                 }) as newGameButton
             ) as bar
             ui.Board(
@@ -125,20 +150,24 @@ client.onLoad(<>
                                             board.forEach(m -> m.forEach(n ->
                                                 n.swept: true
                                             ))
+                                            updateCellsAfterSwept{x: x, y: y}
                                         else
-                                            board.(x).(y).swept: true
-                                            if board.(x).(y).number = 0
-                                                fire: (m, n) ->
-                                                    if 0 <= m < 9 and 0 <= n < 9
-                                                        cells.(m * 9 + n).onClick.fire()
-                                                fire(x - 1, y)
-                                                fire(x + 1, y)
-                                                fire(x, y - 1)
-                                                fire(x, y + 1)
-                                                fire(x - 1, y - 1)
-                                                fire(x + 1, y - 1)
-                                                fire(x - 1, y + 1)
-                                                fire(x + 1, y + 1)
+                                            sweep: pos ->
+                                                trySweep: p ->
+                                                    if 0 <= p.x < 9 and 0 <= p.y < 9
+                                                        sweep(p)
+                                                board.(pos.x).(pos.y).swept: true
+                                                if board.(pos.x).(pos.y).number = 0
+                                                    trySweep(pos.x - 1, pos.y)
+                                                    trySweep(pos.x + 1, pos.y)
+                                                    trySweep(pos.x, pos.y - 1)
+                                                    trySweep(pos.x, pos.y + 1)
+                                                    trySweep(pos.x - 1, pos.y - 1)
+                                                    trySweep(pos.x + 1, pos.y - 1)
+                                                    trySweep(pos.x - 1, pos.y + 1)
+                                                    trySweep(pos.x + 1, pos.y + 1)
+                                            sweep{x: x, y: y}
+                                            updateCellsAfterSwept{x: x, y: y}
                                             remaining: board..flatten().filter(m -> not m.swept)
                                             if remaining.length = 10
                                                 overlay.show()
@@ -156,19 +185,6 @@ client.onLoad(<>
         ui.root.add(sceneBox)
 
         board: repeat(9, <> repeat(9, <> {hasMine: false, swept: false, number: 0, flagged: false}))
-        loop(9, x -> loop(9, y ->
-            Observer(<>
-                board.(x).(y).swept
-            ).onUpdate(event ->
-                if event.value ≠ cells.(x * 9 + y).isOdd()
-                    cells.(x * 9 + y).flip(1, 1000)
-            )
-            Observer(<>
-                board.(x).(y).flagged
-            ).onUpdate(event ->
-                #cells.(x * 9 + y).getChildren().1.setVisibility(event.value)
-            )
-        ))
         newGameButton.onClick.fire()
 
         resizeHandler: <>
