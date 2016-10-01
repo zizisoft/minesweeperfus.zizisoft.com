@@ -46,17 +46,44 @@ client.onLoad(<>
 
         getCell: pos -> cells.(pos.x * 9 + pos.y)
 
-        updateCellsAfterSwept: pos ->
-            getCell(pos).flip(1, 1000)
+        updateCellsAfterSwept: pos -> Promise((resolve, reject) ->
+            checker: <>
+                flippedCount: self + 1
+                if flippedCount = totalCount
+                    resolve()
+            getCell(pos).flip(1, 1000).then(checker)
+            totalCount: 1
+            flippedCount: 0
             promise: Promise..delay(20)
             loop(9, y -> loop(9, x ->
                 cell: getCell{x: x, y: y}
                 if not (x = pos.x and y = pos.y) and board.(x).(y).swept and not cell.isOdd()
+                    totalCount: self + 1
                     promise: promise.then(<>
-                        cell.flip(1, 1000)
+                        cell.flip(1, 1000).then(checker)
                         Promise..delay(20)
                     )
             ))
+        )
+
+        restoreCells: <> Promise((resolve, reject) ->
+            totalCount: 0
+            flippedCount: 0
+            promise: Promise..delay(20)
+            loop(9, y -> loop(9, x ->
+                if board.(x).(y).swept
+                    cell: getCell{x: x, y: y}
+                    totalCount: self + 1
+                    promise: promise.then(<>
+                        cell.flip(1, 1000).then(<>
+                            flippedCount: self + 1
+                            if flippedCount = totalCount
+                                resolve()
+                        )
+                        Promise..delay(20)
+                    )
+            ))
+        )
 
         homeScene: ui.Stack(
             {backgroundPaint: "rgb(0,0,0)", scale: 0.001}
@@ -77,16 +104,7 @@ client.onLoad(<>
                     border: {width: "0.1em", paint: "rgb(255,255,255)"}
                     padding: ui.Padding("0.75em", "0.75em")
                     click: <>
-                        promise: Promise..delay(20)
-                        loop(9, y -> loop(9, x ->
-                            if board.(x).(y).swept
-                                cell: getCell{x: x, y: y}
-                                promise: promise.then(<>
-                                    cell.flip(1, 1000)
-                                    Promise..delay(20)
-                                )
-                        ))
-                        promise: promise.then(<>
+                        restoreCells().then(<>
                             randomBooleans: spread(true, 10).concat(spread(false, 71))..random()
                             loop(9, x -> loop(9, y ->
                                 board.(x).(y).hasMine: randomBooleans.(x * 9 + y)
