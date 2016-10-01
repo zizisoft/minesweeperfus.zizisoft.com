@@ -83,6 +83,7 @@ client.onLoad(<>
                         Promise..delay(20)
                     )
             ))
+            if totalCount = 0 then resolve()
         )
 
         homeScene: ui.Stack(
