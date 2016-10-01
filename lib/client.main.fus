@@ -51,7 +51,7 @@ client.onLoad(<>
                 flippedCount: self + 1
                 if flippedCount = totalCount
                     resolve()
-            getCell(pos).flip(1, 1000).then(checker)
+            getCell(pos).flip(1, 600).then(checker)
             totalCount: 1
             flippedCount: 0
             promise: Promise..delay(20)
@@ -60,7 +60,7 @@ client.onLoad(<>
                 if not (x = pos.x and y = pos.y) and board.(x).(y).swept and not cell.isOdd()
                     totalCount: self + 1
                     promise: promise.then(<>
-                        cell.flip(1, 1000).then(checker)
+                        cell.flip(1, 600).then(checker)
                         Promise..delay(20)
                     )
             ))
@@ -75,7 +75,7 @@ client.onLoad(<>
                     cell: getCell{x: x, y: y}
                     totalCount: self + 1
                     promise: promise.then(<>
-                        cell.flip(1, 1000).then(<>
+                        cell.flip(1, 600).then(<>
                             flippedCount: self + 1
                             if flippedCount = totalCount
                                 resolve()
@@ -130,7 +130,12 @@ client.onLoad(<>
                                     if board.(x).(y).hasMine
                                         "rgb(255,0,0)"
                                     else
-                                        "rgb(64,64,64)"
+                                        "rgb(64,96,128)"
+                                ).setBorder(
+                                    if board.(x).(y).hasMine
+                                        {width: "0.3em", paint: "rgb(255,0,0)"}
+                                    else
+                                        {width: "0.3em", paint: "rgb(80,112,144)"}
                                 )
                                 cells.(x * 9 + y).getBackFace().getFirstChild().setSource(
                                     if board.(x).(y).hasMine
@@ -156,7 +161,10 @@ client.onLoad(<>
                                 perspective: "5rem"
                                 orientation: "horizontal"
                                 frontFace: ui.Board(
-                                    {backgroundPaint: "rgb(128,128,128)"}
+                                    {
+                                        backgroundPaint: "rgb(64,64,64)"
+                                        border: {width: "0.3em", paint: "rgb(80,80,80)"}
+                                    }
                                 )
                                 backFace: ui.Board(
                                     ui.Text({fontSize: 3}, "")
@@ -197,7 +205,7 @@ client.onLoad(<>
                         )
                     ))..flatten() as cells
                 )
-                ui.Board{backgroundPaint: "rgba(255,0,0,0.1)", visibility: "hidden"} as overlay
+                ui.Board{visibility: "hidden"} as overlay
             ) as uiBoard
         )
         sceneBox: ui.SceneBox(homeScene)
