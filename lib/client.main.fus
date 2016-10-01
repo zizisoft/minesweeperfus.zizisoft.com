@@ -48,13 +48,13 @@ client.onLoad(<>
 
         updateCellsAfterSwept: pos ->
             getCell(pos).flip(1, 1000)
-            promise: Promise..delay(50)
-            loop(9, x -> loop(9, y ->
+            promise: Promise..delay(20)
+            loop(9, y -> loop(9, x ->
                 cell: getCell{x: x, y: y}
                 if not (x = pos.x and y = pos.y) and board.(x).(y).swept and not cell.isOdd()
-                    promise.then(<>
+                    promise: promise.then(<>
                         cell.flip(1, 1000)
-                        Promise..delay(50)
+                        Promise..delay(20)
                     )
             ))
 
@@ -77,16 +77,16 @@ client.onLoad(<>
                     border: {width: "0.1em", paint: "rgb(255,255,255)"}
                     padding: ui.Padding("0.75em", "0.75em")
                     click: <>
-                        promise: Promise..delay(50)
-                        loop(9, x -> loop(9, y ->
+                        promise: Promise..delay(20)
+                        loop(9, y -> loop(9, x ->
                             if board.(x).(y).swept
                                 cell: getCell{x: x, y: y}
-                                promise.then(<>
+                                promise: promise.then(<>
                                     cell.flip(1, 1000)
-                                    Promise..delay(50)
+                                    Promise..delay(20)
                                 )
                         ))
-                        promise.then(<>
+                        promise: promise.then(<>
                             randomBooleans: spread(true, 10).concat(spread(false, 71))..random()
                             loop(9, x -> loop(9, y ->
                                 board.(x).(y).hasMine: randomBooleans.(x * 9 + y)
