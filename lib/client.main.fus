@@ -50,8 +50,9 @@ client.onLoad(<>
             checker: <>
                 flippedCount: self + 1
                 if flippedCount = totalCount
+                    getCell(pos).setZIndex(0)
                     resolve()
-            getCell(pos).flip(1, 600).then(checker)
+            getCell(pos).setZIndex(1).flip(1, 600).then(checker)
             totalCount: 1
             flippedCount: 0
             promise: Promise..delay(20)
