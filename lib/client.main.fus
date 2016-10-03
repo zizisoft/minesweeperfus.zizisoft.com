@@ -10,6 +10,8 @@ lit: client.lit
 
 parseElement: s -> DOMParser().parseFromString(s, "application/xml").documentElement
 
+client.autoCloseStartup: false
+
 if navigator.vendor = "Google Inc." or navigator.vendor = "Apple Computer, Inc."
     ui.enableAntiFraction()
 ui.setRem(0.018)
@@ -223,6 +225,8 @@ client.onLoad(<>
                 uiBoard.setSize("auto", 1)
         ui.onResize(resizeHandler)
         resizeHandler()
+
+        client.closeStartup()
 
         sceneBox.showScene(
             homeScene
