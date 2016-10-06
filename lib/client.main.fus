@@ -12,6 +12,9 @@ parseElement: s -> DOMParser().parseFromString(s, "application/xml").documentEle
 
 client.autoCloseStartup: false
 
+BOARD_SIZE: 9
+MINE_COUNT: 10
+
 if navigator.vendor = "Google Inc." or navigator.vendor = "Apple Computer, Inc."
     ui.enableAntiFraction()
 ui.setRem(0.018)
@@ -46,7 +49,7 @@ client.onLoad(<>
         ")
         document.head.appendChild(woffStyleElement)
 
-        getCell: pos -> cells.(pos.x * 9 + pos.y)
+        getCell: pos -> cells.(pos.x * BOARD_SIZE + pos.y)
 
         updateCellsAfterSwept: pos -> Promise((resolve, reject) ->
             checker: <>
@@ -57,7 +60,7 @@ client.onLoad(<>
             getCell(pos).setZIndex(1).flip(1, 600).then(checker)
             totalCount: 1
             flippedCount: 0
-            loop(9, y -> loop(9, x ->
+            loop(BOARD_SIZE, y -> loop(BOARD_SIZE, x ->
                 cell: getCell{x: x, y: y}
                 if not (x = pos.x and y = pos.y) and board.(x).(y).swept and not cell.isOdd()
                     totalCount: self + 1
@@ -70,7 +73,7 @@ client.onLoad(<>
         restoreCells: <> Promise((resolve, reject) ->
             totalCount: 0
             flippedCount: 0
-            loop(9, y -> loop(9, x ->
+            loop(BOARD_SIZE, y -> loop(BOARD_SIZE, x ->
                 if board.(x).(y).swept
                     cell: getCell{x: x, y: y}
                     totalCount: self + 1
@@ -105,15 +108,18 @@ client.onLoad(<>
                     padding: ui.Padding("0.75em", "0.75em")
                     click: <>
                         restoreCells().then(<>
-                            randomBooleans: spread(true, 10).concat(spread(false, 71))..random()
-                            loop(9, x -> loop(9, y ->
-                                board.(x).(y).hasMine: randomBooleans.(x * 9 + y)
+                            randomBooleans:
+                                spread(true, MINE_COUNT)
+                                .concat(spread(false, BOARD_SIZE * BOARD_SIZE - MINE_COUNT))
+                                ..random()
+                            loop(BOARD_SIZE, x -> loop(BOARD_SIZE, y ->
+                                board.(x).(y).hasMine: randomBooleans.(x * BOARD_SIZE + y)
                                 board.(x).(y).swept: false
                                 board.(x).(y).flagged: false
                             ))
                             getMineCount: (x, y) ->
-                                0 <= x < 9 and 0 <= y < 9 and board.(x).(y).hasMine ? 1 | 0
-                            loop(9, x -> loop(9, y ->
+                                0 <= x < BOARD_SIZE and 0 <= y < BOARD_SIZE and board.(x).(y).hasMine ? 1 | 0
+                            loop(BOARD_SIZE, x -> loop(BOARD_SIZE, y ->
                                 board.(x).(y).number:
                                     getMineCount(x - 1, y)
                                     + getMineCount(x + 1, y)
@@ -124,8 +130,8 @@ client.onLoad(<>
                                     + getMineCount(x - 1, y + 1)
                                     + getMineCount(x + 1, y + 1)
                             ))
-                            loop(9, x -> loop(9, y ->
-                                cells.(x * 9 + y).getBackFace().setBackgroundPaint(
+                            loop(BOARD_SIZE, x -> loop(BOARD_SIZE, y ->
+                                cells.(x * BOARD_SIZE + y).getBackFace().setBackgroundPaint(
                                     if board.(x).(y).hasMine
                                         "rgb(255,0,0)"
                                     else
@@ -136,7 +142,7 @@ client.onLoad(<>
                                     else
                                         {width: "0.3em", paint: "rgb(80,112,144)"}
                                 )
-                                cells.(x * 9 + y).getBackFace().getFirstChild().setSource(
+                                cells.(x * BOARD_SIZE + y).getBackFace().getFirstChild().setSource(
                                     if board.(x).(y).hasMine
                                         "M"
                                     else
@@ -150,13 +156,13 @@ client.onLoad(<>
             ui.Board(
                 {aspectRatio: 1}
                 ui.Board(
-                    repeat(9, x -> repeat(9, y ->
+                    repeat(BOARD_SIZE, x -> repeat(BOARD_SIZE, y ->
                         ui.Flipper(
                             {
-                                x: (x + 0.5) / 9
-                                y: (y + 0.5) / 9
-                                width: 1 / 9 * 0.9
-                                height: 1 / 9 * 0.9
+                                x: (x + 0.5) / BOARD_SIZE
+                                y: (y + 0.5) / BOARD_SIZE
+                                width: 1 / BOARD_SIZE * 0.9
+                                height: 1 / BOARD_SIZE * 0.9
                                 perspective: "5rem"
                                 orientation: "horizontal"
                                 frontFace: ui.Board(
@@ -180,7 +186,7 @@ client.onLoad(<>
                                         else
                                             sweep: pos ->
                                                 trySweep: (px, py) ->
-                                                    if 0 <= px < 9 and 0 <= py < 9
+                                                    if 0 <= px < BOARD_SIZE and 0 <= py < BOARD_SIZE
                                                         sweep{x: px, y: py}
                                                 if not board.(pos.x).(pos.y).swept
                                                     board.(pos.x).(pos.y).swept: true
@@ -196,7 +202,7 @@ client.onLoad(<>
                                             sweep{x: x, y: y}
                                             updateCellsAfterSwept{x: x, y: y}
                                             remaining: board..flatten().filter(m -> not m.swept)
-                                            if remaining.length = 10
+                                            if remaining.length = MINE_COUNT
                                                 overlay.show()
                                                 alert("success!")
                                 hold: <>
@@ -211,7 +217,9 @@ client.onLoad(<>
         sceneBox: ui.SceneBox(homeScene)
         ui.root.add(sceneBox)
 
-        board: repeat(9, <> repeat(9, <> {hasMine: false, swept: false, number: 0, flagged: false}))
+        board: repeat(BOARD_SIZE, <> repeat(BOARD_SIZE, <>
+            {hasMine: false, swept: false, number: 0, flagged: false}
+        ))
         newGameButton.onClick.fire()
 
         resizeHandler: <>
