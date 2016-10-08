@@ -172,7 +172,7 @@ client.onLoad(<>
                                     }
                                 )
                                 backFace: ui.Board(
-                                    ui.Text({fontSize: 3}, "")
+                                    ui.Text({fontSize: 27 / BOARD_SIZE}, "")
                                 )
                                 holdThreshold: 500
                                 click: <>
