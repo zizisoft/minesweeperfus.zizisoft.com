@@ -163,7 +163,7 @@ client.onLoad(<>
                                 y: (y + 0.5) / BOARD_SIZE
                                 width: 1 / BOARD_SIZE * 0.9
                                 height: 1 / BOARD_SIZE * 0.9
-                                perspective: "5rem"
+                                perspective: 1
                                 orientation: "horizontal"
                                 frontFace: ui.Board(
                                     {
