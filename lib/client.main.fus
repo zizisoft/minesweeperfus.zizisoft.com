@@ -89,7 +89,7 @@ client.onLoad(<>
         )
 
         homeScene: ui.Stack(
-            {backgroundPaint: "rgb(0,0,0)", scale: 0.001}
+            {backgroundPaint: "rgb(0,0,0)", width: 1, height: 1}
             ui.Stack(
                 {
                     grow: 1
@@ -214,8 +214,7 @@ client.onLoad(<>
                 ui.Board{visibility: "hidden"} as overlay
             ) as uiBoard
         )
-        sceneBox: ui.SceneBox(homeScene)
-        ui.root.add(sceneBox)
+        ui.root.add(homeScene)
 
         board: repeat(BOARD_SIZE, <> repeat(BOARD_SIZE, <>
             {hasMine: false, swept: false, number: 0, flagged: false}
@@ -235,31 +234,5 @@ client.onLoad(<>
         resizeHandler()
 
         client.closeStartup()
-
-        sceneBox.showScene(
-            homeScene
-            (a, b, box, duration, timingFunction) ->
-                b.setScale(0.001).show()
-                (
-                    if a'ok
-                        a.animate{
-                            to: {scale: 5, opacity: 0}
-                            duration: duration / 2
-                            timingFunction: "ease-in"
-                        }
-                    else
-                        Promise.resolve()
-                ).then(<>
-                    b.animate{
-                        to: {scale: 1}
-                        duration: duration / 2
-                        timingFunction: "cubic-bezier(0, 1, 0.8, 1.3)"
-                    }
-                ).then(<>
-                    if a'ok
-                        a.setScale(1).setOpacity(1)
-                )
-            1200
-        )
     )
 )
