@@ -71,6 +71,7 @@ client.onLoad(<>
             totalCount: 0
             flippedCount: 0
             loop(BOARD_SIZE, y -> loop(BOARD_SIZE, x ->
+                updateCellFlagged({x: x, y: y}, false)
                 if board.(x).(y).swept
                     cell: getCell{x: x, y: y}
                     totalCount: self + 1
@@ -84,6 +85,9 @@ client.onLoad(<>
             ))
             if totalCount = 0 then resolve()
         )
+
+        updateCellFlagged: (pos, flagged) ->
+            getCell(pos).getFrontFace().setBackgroundPaint(flagged ? "rgb(255,192,0)" | "rgb(64,64,64)")
 
         ui.setRoot ui.Stack(
             {backgroundPaint: "rgb(0,0,0)", width: 1, height: 1}
@@ -163,7 +167,6 @@ client.onLoad(<>
                             orientation: "horizontal"
                             frontFace: ui.Board(
                                 {
-                                    backgroundPaint: "rgb(64,64,64)"
                                     border: {width: "0.3em", paint: "rgb(80,80,80)"}
                                 }
                             )
@@ -205,6 +208,7 @@ client.onLoad(<>
                             hold: <>
                                 if playable
                                     board.(x).(y).flagged: not self
+                                    updateCellFlagged({x: x, y: y}, board.(x).(y).flagged)
                         }
                     )
                 ))..flatten() as cells
