@@ -44,6 +44,8 @@ client.onLoad(<>
         ")
         document.head.appendChild(woffStyleElement)
 
+        playable: false
+
         getCell: pos -> cells.(pos.x * BOARD_SIZE + pos.y)
 
         updateCellsAfterSwept: pos -> Promise((resolve, reject) ->
@@ -144,69 +146,66 @@ client.onLoad(<>
                                         board.(x).(y).number
                                 )
                             ))
-                            overlay.hide()
+                            playable: true
                         )
                 }) as newGameButton
             ) as bar
             ui.Board(
                 {aspectRatio: 1}
-                ui.Board(
-                    repeat(BOARD_SIZE, x -> repeat(BOARD_SIZE, y ->
-                        ui.Flipper(
-                            {
-                                x: (x + 0.5) / BOARD_SIZE
-                                y: (y + 0.5) / BOARD_SIZE
-                                width: 1 / BOARD_SIZE * 0.9
-                                height: 1 / BOARD_SIZE * 0.9
-                                perspective: 1
-                                orientation: "horizontal"
-                                frontFace: ui.Board(
-                                    {
-                                        backgroundPaint: "rgb(64,64,64)"
-                                        border: {width: "0.3em", paint: "rgb(80,80,80)"}
-                                    }
-                                )
-                                backFace: ui.Board(
-                                    ui.Text({fontSize: 27 / BOARD_SIZE}, "")
-                                )
-                                holdThreshold: 500
-                                click: <>
-                                    if not board.(x).(y).swept
-                                        if board.(x).(y).hasMine
-                                            overlay.show()
-                                            board.forEach(m -> m.forEach(n ->
-                                                n.swept: true
-                                            ))
-                                            updateCellsAfterSwept{x: x, y: y}
-                                        else
-                                            sweep: pos ->
-                                                trySweep: (px, py) ->
-                                                    if 0 <= px < BOARD_SIZE and 0 <= py < BOARD_SIZE
-                                                        sweep{x: px, y: py}
-                                                if not board.(pos.x).(pos.y).swept
-                                                    board.(pos.x).(pos.y).swept: true
-                                                    if board.(pos.x).(pos.y).number = 0
-                                                        trySweep(pos.x - 1, pos.y)
-                                                        trySweep(pos.x + 1, pos.y)
-                                                        trySweep(pos.x, pos.y - 1)
-                                                        trySweep(pos.x, pos.y + 1)
-                                                        trySweep(pos.x - 1, pos.y - 1)
-                                                        trySweep(pos.x + 1, pos.y - 1)
-                                                        trySweep(pos.x - 1, pos.y + 1)
-                                                        trySweep(pos.x + 1, pos.y + 1)
-                                            sweep{x: x, y: y}
-                                            updateCellsAfterSwept{x: x, y: y}
-                                            remaining: board..flatten().filter(m -> not m.swept)
-                                            if remaining.length = MINE_COUNT
-                                                overlay.show()
-                                                alert("success!")
-                                hold: <>
-                                    board.(x).(y).flagged: not self
-                            }
-                        )
-                    ))..flatten() as cells
-                )
-                ui.Board{visibility: "hidden"} as overlay
+                repeat(BOARD_SIZE, x -> repeat(BOARD_SIZE, y ->
+                    ui.Flipper(
+                        {
+                            x: (x + 0.5) / BOARD_SIZE
+                            y: (y + 0.5) / BOARD_SIZE
+                            width: 1 / BOARD_SIZE * 0.9
+                            height: 1 / BOARD_SIZE * 0.9
+                            perspective: 1
+                            orientation: "horizontal"
+                            frontFace: ui.Board(
+                                {
+                                    backgroundPaint: "rgb(64,64,64)"
+                                    border: {width: "0.3em", paint: "rgb(80,80,80)"}
+                                }
+                            )
+                            backFace: ui.Board(
+                                ui.Text({fontSize: 27 / BOARD_SIZE}, "")
+                            )
+                            holdThreshold: 500
+                            click: <>
+                                if not board.(x).(y).swept
+                                    if board.(x).(y).hasMine
+                                        playable: false
+                                        board.forEach(m -> m.forEach(n ->
+                                            n.swept: true
+                                        ))
+                                        updateCellsAfterSwept{x: x, y: y}
+                                    else
+                                        sweep: pos ->
+                                            trySweep: (px, py) ->
+                                                if 0 <= px < BOARD_SIZE and 0 <= py < BOARD_SIZE
+                                                    sweep{x: px, y: py}
+                                            if not board.(pos.x).(pos.y).swept
+                                                board.(pos.x).(pos.y).swept: true
+                                                if board.(pos.x).(pos.y).number = 0
+                                                    trySweep(pos.x - 1, pos.y)
+                                                    trySweep(pos.x + 1, pos.y)
+                                                    trySweep(pos.x, pos.y - 1)
+                                                    trySweep(pos.x, pos.y + 1)
+                                                    trySweep(pos.x - 1, pos.y - 1)
+                                                    trySweep(pos.x + 1, pos.y - 1)
+                                                    trySweep(pos.x - 1, pos.y + 1)
+                                                    trySweep(pos.x + 1, pos.y + 1)
+                                        sweep{x: x, y: y}
+                                        updateCellsAfterSwept{x: x, y: y}
+                                        remaining: board..flatten().filter(m -> not m.swept)
+                                        if remaining.length = MINE_COUNT
+                                            playable: false
+                                            alert("success!")
+                            hold: <>
+                                board.(x).(y).flagged: not self
+                        }
+                    )
+                ))..flatten() as cells
             ) as uiBoard
         )
 
