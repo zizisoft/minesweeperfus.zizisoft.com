@@ -18,11 +18,6 @@ MINE_COUNT: 10
 if navigator.vendor = "Google Inc." or navigator.vendor = "Apple Computer, Inc."
     ui.enableAntiFraction()
 ui.setRem(0.018)
-ui.root
-.setFontFamily(
-    "\"Helvetica Neue\", Helvetica, Arial, \"Lucida Grande\", \"Lucida Sans Unicode\", "
-    + "\"Lantinghei SC\", \"Microsoft YaHei UI\", \"Microsoft YaHei\", SimHei, sans-serif"
-).setPaint("rgb(255,255,255)").setStrokeWidth(0.06)
 
 client.onLoad(<>
     Promise.all[
@@ -88,7 +83,7 @@ client.onLoad(<>
             if totalCount = 0 then resolve()
         )
 
-        homeScene: ui.Stack(
+        ui.setRoot ui.Stack(
             {backgroundPaint: "rgb(0,0,0)", width: 1, height: 1}
             ui.Stack(
                 {
@@ -214,7 +209,12 @@ client.onLoad(<>
                 ui.Board{visibility: "hidden"} as overlay
             ) as uiBoard
         )
-        ui.root.add(homeScene)
+
+        ui.root
+        .setFontFamily(
+            "\"Helvetica Neue\", Helvetica, Arial, \"Lucida Grande\", \"Lucida Sans Unicode\", "
+            + "\"Lantinghei SC\", \"Microsoft YaHei UI\", \"Microsoft YaHei\", SimHei, sans-serif"
+        ).setPaint("rgb(255,255,255)").setStrokeWidth(0.06)
 
         board: repeat(BOARD_SIZE, <> repeat(BOARD_SIZE, <>
             {hasMine: false, swept: false, number: 0, flagged: false}
@@ -223,11 +223,11 @@ client.onLoad(<>
 
         resizeHandler: <>
             if ui.root.computeWidth() < ui.root.computeHeight()
-                homeScene.setHorizontal(false)
+                ui.root.setHorizontal(false)
                 bar.setHorizontal(true)
                 uiBoard.setSize(1, "auto")
             else
-                homeScene.setHorizontal(true)
+                ui.root.setHorizontal(true)
                 bar.setHorizontal(false)
                 uiBoard.setSize("auto", 1)
         ui.onResize(resizeHandler)
