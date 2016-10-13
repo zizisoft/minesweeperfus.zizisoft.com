@@ -173,6 +173,12 @@ client.onLoad(<>
                             backFace: ui.Board(
                                 ui.Text({fontSize: 27 / BOARD_SIZE}, "")
                             )
+
+                            # If don't hide then IE 11 may show a very slim border. That's because
+                            # IE has a bug with CSS "backface-visibility", so "backface-visibility"
+                            # is actually disabled by Site Engine on IE 11.
+                            hidesBackFace: client.browser.isIe11
+
                             holdThreshold: 500
                             click: <>
                                 if playable
