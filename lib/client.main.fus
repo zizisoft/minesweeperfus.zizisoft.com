@@ -48,6 +48,15 @@ client.onLoad(<>
 
         getCell: pos -> cells.(pos.x * BOARD_SIZE + pos.y)
 
+        updateCell: pos ->
+            cell: getCell(pos)
+            if board.(pos.x).(pos.y).hasMine
+                cell.setBackgroundPaint("rgb(255,0,0)")
+                cell.getFirstChild().setSource("M")
+            else
+                cell.setBackgroundPaint("rgb(64,96,128)")
+                cell.getFirstChild().setSource(board.(pos.x).(pos.y).number)
+
         updateCellsAfterSwept: (pos, newlySweptPositions) -> Promise((resolve, reject) ->
             if board.(pos.x).(pos.y).hasMine
                 flipper.getBackFace().setBackgroundPaint("rgb(255,0,0)")
@@ -63,7 +72,10 @@ client.onLoad(<>
             getCell(pos).hide()
             flipper.flip(1, 600)
             .then(<>
-                if newlySweptPositions..isEmpty()
+                if newlySweptPositions.length = 1
+                    updateCell(pos)
+                    getCell(pos).show()
+                    flipper.hide()
                     resolve()
                 else
                     doneCount: 0
@@ -79,13 +91,8 @@ client.onLoad(<>
                             scoreBars.(y).animate{to: {opacity: 1}, duration: 200}
                         ).then(<>
                             newlySweptLines.(y).forEach(x ->
+                                updateCell{x: x, y: y}
                                 cell: getCell{x: x, y: y}
-                                if board.(x).(y).hasMine
-                                    cell.setBackgroundPaint("rgb(255,0,0)")
-                                    cell.getFirstChild().setSource("M")
-                                else
-                                    cell.setBackgroundPaint("rgb(64,96,128)")
-                                    cell.getFirstChild().setSource(board.(x).(y).number)
                                 if x = pos.x and y = pos.y
                                     cell.show()
                                     flipper.hide()
