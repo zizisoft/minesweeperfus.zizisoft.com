@@ -67,8 +67,8 @@ client.onLoad(<>
                         scoreBars.(y).setZIndex(1)
                     )
                     loop(BOARD_SIZE, y ->
-                        Promise..delay(y * 100).then(<>
-                            scoreBars.(y).animate{to: {opacity: 1}, duration: 300}
+                        Promise..delay(y * 40).then(<>
+                            scoreBars.(y).animate{to: {opacity: 1}, duration: 200}
                         ).then(<>
                             newlySweptLines.(y).forEach(x ->
                                 cell: getCell{x: x, y: y}
@@ -81,7 +81,7 @@ client.onLoad(<>
                                 if x = pos.x and y = pos.y
                                     flipper.hide()
                             )
-                            scoreBars.(y).animate{to: {opacity: 0}, duration: 300}
+                            scoreBars.(y).animate{to: {opacity: 0}, duration: 200}
                         ).then(<>
                             doneCount: self + 1
                             if doneCount = BOARD_SIZE
@@ -100,8 +100,8 @@ client.onLoad(<>
                 scoreBars.(y).setZIndex(1)
             )
             loop(BOARD_SIZE, y ->
-                Promise..delay(y * 100).then(<>
-                    scoreBars.(y).animate{to: {opacity: 1}, duration: 300}
+                Promise..delay(y * 40).then(<>
+                    scoreBars.(y).animate{to: {opacity: 1}, duration: 200}
                 ).then(<>
                     loop(BOARD_SIZE, x ->
                         updateCellFlagged({x: x, y: y}, false)
@@ -110,7 +110,7 @@ client.onLoad(<>
                             cell.setBackgroundPaint("rgb(64,64,64)")
                             cell.getFirstChild().setSource("")
                     )
-                    scoreBars.(y).animate{to: {opacity: 0}, duration: 300}
+                    scoreBars.(y).animate{to: {opacity: 0}, duration: 200}
                 ).then(<>
                     doneCount: self + 1
                     if doneCount = BOARD_SIZE
