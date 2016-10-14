@@ -49,6 +49,12 @@ client.onLoad(<>
         getCell: pos -> cells.(pos.x * BOARD_SIZE + pos.y)
 
         updateCellsAfterSwept: (pos, newlySweptPositions) -> Promise((resolve, reject) ->
+            if board.(pos.x).(pos.y).hasMine
+                flipper.getBackFace().setBackgroundPaint("rgb(255,0,0)")
+                flipper.getBackFace().getFirstChild().setSource("M")
+            else
+                flipper.getBackFace().setBackgroundPaint("rgb(64,96,128)")
+                flipper.getBackFace().getFirstChild().setSource(board.(pos.x).(pos.y).number)
             flipper
             .setX((pos.x + 0.5) / BOARD_SIZE)
             .setY((pos.y + 0.5) / BOARD_SIZE)
@@ -222,7 +228,7 @@ client.onLoad(<>
                                     board.(x).(y).flagged: not self
                                     updateCellFlagged({x: x, y: y}, board.(x).(y).flagged)
                         }
-                        ui.Text("")
+                        ui.Text({fontSize: 27 / BOARD_SIZE}, "")
                     )
                 ))..flatten() as cells).concat(
                     repeat(BOARD_SIZE, y ->
@@ -246,7 +252,7 @@ client.onLoad(<>
                             orientation: "horizontal"
                             frontFace: ui.Board(
                                 {
-                                    border: {width: "0.3em", paint: "rgb(80,80,80)"}
+                                    backgroundPaint: "rgb(64,64,64)"
                                 }
                             )
                             backFace: ui.Board(
