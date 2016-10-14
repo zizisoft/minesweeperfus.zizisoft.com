@@ -64,7 +64,7 @@ client.onLoad(<>
                         newlySweptLines.(m.y).push(m.x)
                     )
                     loop(BOARD_SIZE, y ->
-                        scoreBars.(y).setZIndex: 1
+                        scoreBars.(y).setZIndex(1)
                     )
                     loop(BOARD_SIZE, y ->
                         Promise..delay(y * 100).then(<>
@@ -86,7 +86,7 @@ client.onLoad(<>
                             doneCount: self + 1
                             if doneCount = BOARD_SIZE
                                 loop(BOARD_SIZE, m ->
-                                    scoreBars.(m).setZIndex: -1
+                                    scoreBars.(m).setZIndex(1)
                                 )
                                 resolve()
                         )
@@ -97,7 +97,7 @@ client.onLoad(<>
         restoreCells: <> Promise((resolve, reject) ->
             doneCount: 0
             loop(BOARD_SIZE, y ->
-                scoreBars.(y).setZIndex: 1
+                scoreBars.(y).setZIndex(1)
             )
             loop(BOARD_SIZE, y ->
                 Promise..delay(y * 100).then(<>
@@ -115,7 +115,7 @@ client.onLoad(<>
                     doneCount: self + 1
                     if doneCount = BOARD_SIZE
                         loop(BOARD_SIZE, m ->
-                            scoreBars.(m).setZIndex: -1
+                            scoreBars.(m).setZIndex(1)
                         )
                         resolve()
                 )
