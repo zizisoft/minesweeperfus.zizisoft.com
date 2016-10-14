@@ -86,7 +86,7 @@ client.onLoad(<>
                             doneCount: self + 1
                             if doneCount = BOARD_SIZE
                                 loop(BOARD_SIZE, m ->
-                                    scoreBars.(m).setZIndex(1)
+                                    scoreBars.(m).setZIndex(-1)
                                 )
                                 resolve()
                         )
@@ -115,7 +115,7 @@ client.onLoad(<>
                     doneCount: self + 1
                     if doneCount = BOARD_SIZE
                         loop(BOARD_SIZE, m ->
-                            scoreBars.(m).setZIndex(1)
+                            scoreBars.(m).setZIndex(-1)
                         )
                         resolve()
                 )
