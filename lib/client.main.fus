@@ -15,7 +15,9 @@ client.autoCloseStartup: false
 BOARD_SIZE: 9
 MINE_COUNT: 10
 
-if navigator.vendor = "Google Inc." or navigator.vendor = "Apple Computer, Inc."
+if client.browser.deviceType = "computer" and (
+    navigator.vendor = "Google Inc." or navigator.vendor = "Apple Computer, Inc."
+)
     ui.enableAntiFraction()
 ui.setRem(0.018)
 
@@ -248,7 +250,7 @@ client.onLoad(<>
                             height: 1 / BOARD_SIZE * 0.9
                             zIndex: -1
                             opacity: 0
-                            backgroundPaint: "rgb(255,255,255)"
+                            backgroundPaint: "rgb(255,224,160)"
                         }
                     ) as scoreBars
                 ).concat[
