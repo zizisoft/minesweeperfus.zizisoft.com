@@ -180,6 +180,7 @@ client.onLoad(<>
                             y: (y + 0.5) / BOARD_SIZE
                             width: 1 / BOARD_SIZE * 0.9
                             height: 1 / BOARD_SIZE * 0.9
+                            backgroundPaint: "rgb(64,64,64)"
                             holdThreshold: 500
                             click: <>
                                 if playable
