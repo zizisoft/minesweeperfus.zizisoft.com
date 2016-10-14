@@ -50,8 +50,8 @@ client.onLoad(<>
 
         updateCellsAfterSwept: (pos, newlySweptPositions) -> Promise((resolve, reject) ->
             flipper
-            .setX((x + 0.5) / BOARD_SIZE)
-            .setY((y + 0.5) / BOARD_SIZE)
+            .setX((pos.x + 0.5) / BOARD_SIZE)
+            .setY((pos.y + 0.5) / BOARD_SIZE)
             .show()
             .flip(1, 600)
             .then(<>
@@ -227,6 +227,7 @@ client.onLoad(<>
                             width: 1
                             height: 1 / BOARD_SIZE * 0.9
                             zIndex: -1
+                            opacity: 0
                         }
                     ) as scoreBars
                 ).concat[
