@@ -48,46 +48,82 @@ client.onLoad(<>
 
         getCell: pos -> cells.(pos.x * BOARD_SIZE + pos.y)
 
-        updateCellsAfterSwept: pos -> Promise((resolve, reject) ->
-            checker: <>
-                flippedCount: self + 1
-                if flippedCount = totalCount
-                    getCell(pos).setZIndex(0)
+        updateCellsAfterSwept: (pos, newlySweptPositions) -> Promise((resolve, reject) ->
+            flipper
+            .setX((x + 0.5) / BOARD_SIZE)
+            .setY((y + 0.5) / BOARD_SIZE)
+            .show()
+            .flip(1, 600)
+            .then(<>
+                if newlySweptPositions..isEmpty()
                     resolve()
-            getCell(pos).setZIndex(1).flip(1, 600).then(checker)
-            totalCount: 1
-            flippedCount: 0
-            loop(BOARD_SIZE, y -> loop(BOARD_SIZE, x ->
-                cell: getCell{x: x, y: y}
-                if not (x = pos.x and y = pos.y) and board.(x).(y).swept and not cell.isOdd()
-                    totalCount: self + 1
-                    Promise..delay(20 * totalCount).then(<>
-                        cell.flip(1, 600).then(checker)
+                else
+                    doneCount: 0
+                    newlySweptLines: repeat(BOARD_SIZE, <> [])
+                    newlySweptPositions.forEach(m ->
+                        newlySweptLines.(m.y).push(m.x)
                     )
-            ))
-        )
-
-        restoreCells: <> Promise((resolve, reject) ->
-            totalCount: 0
-            flippedCount: 0
-            loop(BOARD_SIZE, y -> loop(BOARD_SIZE, x ->
-                updateCellFlagged({x: x, y: y}, false)
-                if board.(x).(y).swept
-                    cell: getCell{x: x, y: y}
-                    totalCount: self + 1
-                    Promise..delay(20 * totalCount).then(<>
-                        cell.flip(1, 600).then(<>
-                            flippedCount: self + 1
-                            if flippedCount = totalCount
+                    loop(BOARD_SIZE, y ->
+                        scoreBars.(y).setZIndex: 1
+                    )
+                    loop(BOARD_SIZE, y ->
+                        Promise..delay(y * 100).then(<>
+                            scoreBars.(y).animate{to: {opacity: 1}, duration: 300}
+                        ).then(<>
+                            newlySweptLines.(y).forEach(x ->
+                                cell: getCell{x: x, y: y}
+                                if board.(x).(y).hasMine
+                                    cell.setBackgroundPaint("rgb(255,0,0)")
+                                    cell.getFirstChild().setSource("M")
+                                else
+                                    cell.setBackgroundPaint("rgb(64,96,128)")
+                                    cell.getFirstChild().setSource(board.(x).(y).number)
+                                if x = pos.x and y = pos.y
+                                    flipper.hide()
+                            )
+                            scoreBars.(y).animate{to: {opacity: 0}, duration: 300}
+                        ).then(<>
+                            doneCount: self + 1
+                            if doneCount = BOARD_SIZE
+                                loop(BOARD_SIZE, m ->
+                                    scoreBars.(m).setZIndex: -1
+                                )
                                 resolve()
                         )
                     )
-            ))
-            if totalCount = 0 then resolve()
+            )
+        )
+
+        restoreCells: <> Promise((resolve, reject) ->
+            doneCount: 0
+            loop(BOARD_SIZE, y ->
+                scoreBars.(y).setZIndex: 1
+            )
+            loop(BOARD_SIZE, y ->
+                Promise..delay(y * 100).then(<>
+                    scoreBars.(y).animate{to: {opacity: 1}, duration: 300}
+                ).then(<>
+                    loop(BOARD_SIZE, x ->
+                        updateCellFlagged({x: x, y: y}, false)
+                        if board.(x).(y).swept
+                            cell: getCell{x: x, y: y}
+                            cell.setBackgroundPaint("rgb(64,64,64)")
+                            cell.getFirstChild().setSource("")
+                    )
+                    scoreBars.(y).animate{to: {opacity: 0}, duration: 300}
+                ).then(<>
+                    doneCount: self + 1
+                    if doneCount = BOARD_SIZE
+                        loop(BOARD_SIZE, m ->
+                            scoreBars.(m).setZIndex: -1
+                        )
+                        resolve()
+                )
+            )
         )
 
         updateCellFlagged: (pos, flagged) ->
-            getCell(pos).getFrontFace().setBackgroundPaint(flagged ? "rgb(255,192,0)" | "rgb(64,64,64)")
+            getCell(pos).setBackgroundPaint(flagged ? "rgb(255,192,0)" | "rgb(64,64,64)")
 
         ui.setRoot ui.Stack(
             {backgroundPaint: "rgb(0,0,0)", width: 1, height: 1}
@@ -131,36 +167,73 @@ client.onLoad(<>
                                     + getMineCount(x - 1, y + 1)
                                     + getMineCount(x + 1, y + 1)
                             ))
-                            loop(BOARD_SIZE, x -> loop(BOARD_SIZE, y ->
-                                cells.(x * BOARD_SIZE + y).getBackFace().setBackgroundPaint(
-                                    if board.(x).(y).hasMine
-                                        "rgb(255,0,0)"
-                                    else
-                                        "rgb(64,96,128)"
-                                ).setBorder(
-                                    if board.(x).(y).hasMine
-                                        {width: "0.3em", paint: "rgb(255,0,0)"}
-                                    else
-                                        {width: "0.3em", paint: "rgb(80,112,144)"}
-                                )
-                                cells.(x * BOARD_SIZE + y).getBackFace().getFirstChild().setSource(
-                                    if board.(x).(y).hasMine
-                                        "M"
-                                    else
-                                        board.(x).(y).number
-                                )
-                            ))
                             playable: true
                         )
                 }) as newGameButton
             ) as bar
             ui.Board(
                 {aspectRatio: 1}
-                repeat(BOARD_SIZE, x -> repeat(BOARD_SIZE, y ->
+                (repeat(BOARD_SIZE, x -> repeat(BOARD_SIZE, y ->
+                    ui.Element{
+                        x: (x + 0.5) / BOARD_SIZE
+                        y: (y + 0.5) / BOARD_SIZE
+                        width: 1 / BOARD_SIZE * 0.9
+                        height: 1 / BOARD_SIZE * 0.9
+                        holdThreshold: 500
+                        click: <>
+                            if playable
+                                if not board.(x).(y).swept
+                                    newlySweptPositions: []
+                                    if board.(x).(y).hasMine
+                                        playable: false
+                                        board.forEach(m -> m.forEach(n ->
+                                            if not n.swept
+                                                n.swept: true
+                                                newlySweptPositions.push{x: m, y: n}
+                                        ))
+                                        updateCellsAfterSwept({x: x, y: y}, newlySweptPositions)
+                                    else
+                                        sweep: pos ->
+                                            trySweep: (px, py) ->
+                                                if 0 <= px < BOARD_SIZE and 0 <= py < BOARD_SIZE
+                                                    sweep{x: px, y: py}
+                                            if not board.(pos.x).(pos.y).swept
+                                                board.(pos.x).(pos.y).swept: true
+                                                newlySweptPositions.push(pos)
+                                                if board.(pos.x).(pos.y).number = 0
+                                                    trySweep(pos.x - 1, pos.y)
+                                                    trySweep(pos.x + 1, pos.y)
+                                                    trySweep(pos.x, pos.y - 1)
+                                                    trySweep(pos.x, pos.y + 1)
+                                                    trySweep(pos.x - 1, pos.y - 1)
+                                                    trySweep(pos.x + 1, pos.y - 1)
+                                                    trySweep(pos.x - 1, pos.y + 1)
+                                                    trySweep(pos.x + 1, pos.y + 1)
+                                        sweep{x: x, y: y}
+                                        updateCellsAfterSwept({x: x, y: y}, newlySweptPositions)
+                                        remaining: board..flatten().filter(m -> not m.swept)
+                                        if remaining.length = MINE_COUNT
+                                            playable: false
+                                            alert("success!")
+                        hold: <>
+                            if playable
+                                board.(x).(y).flagged: not self
+                                updateCellFlagged({x: x, y: y}, board.(x).(y).flagged)
+                    }
+                ))..flatten() as cells).concat(
+                    repeat(BOARD_SIZE, y ->
+                        ui.Element{
+                            y: (y + 0.5) / BOARD_SIZE
+                            width: 1
+                            height: 1 / BOARD_SIZE * 0.9
+                            zIndex: -1
+                        }
+                    ) as scoreBars
+                ).concat[
                     ui.Flipper(
                         {
-                            x: (x + 0.5) / BOARD_SIZE
-                            y: (y + 0.5) / BOARD_SIZE
+                            visibility: "hidden"
+                            zIndex: 1
                             width: 1 / BOARD_SIZE * 0.9
                             height: 1 / BOARD_SIZE * 0.9
                             perspective: 1
@@ -179,45 +252,9 @@ client.onLoad(<>
                             # is actually disabled by Site Engine on IE 11.
                             hidesBackFace: client.browser.isIe11
 
-                            holdThreshold: 500
-                            click: <>
-                                if playable
-                                    if not board.(x).(y).swept
-                                        if board.(x).(y).hasMine
-                                            playable: false
-                                            board.forEach(m -> m.forEach(n ->
-                                                n.swept: true
-                                            ))
-                                            updateCellsAfterSwept{x: x, y: y}
-                                        else
-                                            sweep: pos ->
-                                                trySweep: (px, py) ->
-                                                    if 0 <= px < BOARD_SIZE and 0 <= py < BOARD_SIZE
-                                                        sweep{x: px, y: py}
-                                                if not board.(pos.x).(pos.y).swept
-                                                    board.(pos.x).(pos.y).swept: true
-                                                    if board.(pos.x).(pos.y).number = 0
-                                                        trySweep(pos.x - 1, pos.y)
-                                                        trySweep(pos.x + 1, pos.y)
-                                                        trySweep(pos.x, pos.y - 1)
-                                                        trySweep(pos.x, pos.y + 1)
-                                                        trySweep(pos.x - 1, pos.y - 1)
-                                                        trySweep(pos.x + 1, pos.y - 1)
-                                                        trySweep(pos.x - 1, pos.y + 1)
-                                                        trySweep(pos.x + 1, pos.y + 1)
-                                            sweep{x: x, y: y}
-                                            updateCellsAfterSwept{x: x, y: y}
-                                            remaining: board..flatten().filter(m -> not m.swept)
-                                            if remaining.length = MINE_COUNT
-                                                playable: false
-                                                alert("success!")
-                            hold: <>
-                                if playable
-                                    board.(x).(y).flagged: not self
-                                    updateCellFlagged({x: x, y: y}, board.(x).(y).flagged)
                         }
-                    )
-                ))..flatten() as cells
+                    ) as flipper
+                ]
             ) as uiBoard
         )
 
