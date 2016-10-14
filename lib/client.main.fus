@@ -231,6 +231,7 @@ client.onLoad(<>
                             height: 1 / BOARD_SIZE * 0.9
                             zIndex: -1
                             opacity: 0
+                            backgroundPaint: "rgb(255,255,255)"
                         }
                     ) as scoreBars
                 ).concat[
