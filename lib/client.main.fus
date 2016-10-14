@@ -187,9 +187,9 @@ client.onLoad(<>
                                         newlySweptPositions: []
                                         if board.(x).(y).hasMine
                                             playable: false
-                                            board.forEach(m -> m.forEach(n ->
-                                                if not n.swept
-                                                    n.swept: true
+                                            loop(BOARD_SIZE, m -> loop(BOARD_SIZE, n ->
+                                                if not board.(m).(n).swept
+                                                    board.(m).(n).swept: true
                                                     newlySweptPositions.push{x: m, y: n}
                                             ))
                                             updateCellsAfterSwept({x: x, y: y}, newlySweptPositions)
