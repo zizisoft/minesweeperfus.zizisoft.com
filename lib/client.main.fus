@@ -60,7 +60,8 @@ client.onLoad(<>
             .setX((pos.x + 0.5) / BOARD_SIZE)
             .setY((pos.y + 0.5) / BOARD_SIZE)
             .show()
-            .flip(1, 600)
+            getCell(pos).hide()
+            flipper.flip(1, 600)
             .then(<>
                 if newlySweptPositions..isEmpty()
                     resolve()
@@ -86,6 +87,7 @@ client.onLoad(<>
                                     cell.setBackgroundPaint("rgb(64,96,128)")
                                     cell.getFirstChild().setSource(board.(x).(y).number)
                                 if x = pos.x and y = pos.y
+                                    cell.show()
                                     flipper.hide()
                             )
                             scoreBars.(y).animate{to: {opacity: 0}, duration: 200}
