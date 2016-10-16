@@ -64,12 +64,12 @@ client.onLoad(<>
         updateCellsAfterSwept: (pos, newlySweptPositions) -> Promise((resolve, reject) ->
             (flipper.hasAnimation() ? flipperAnimation | Promise.resolve()).then(<>
                 getCell(pos).hide()
-                flipper.flip(1, 600)
+                flipper.flip(1, 400)
             ).then(<>
-                Promise..delay(600)
+                Promise..delay(0)
             ).then(<>
                 console.log("1", Date.now())
-                flipper.animate{to: {scale: 1}, duration: 600}
+                flipper.animate{to: {scale: 1}, duration: 200}
             ).then(<>
                 console.log("2", Date.now())
                 if newlySweptPositions.length = 1
@@ -140,7 +140,7 @@ client.onLoad(<>
 
         updateCellFlagged: (pos, flagged) ->
             (flipper.hasAnimation() ? flipperAnimation | Promise.resolve()).then(<>
-                flipper.animate{to: {scale: 1}, duration: 600}
+                flipper.animate{to: {scale: 1}, duration: 200}
             ).then(<>
                 updateCellFlaggedQuick(pos, flagged)
             )
@@ -226,7 +226,7 @@ client.onLoad(<>
                                     .setX((x + 0.5) / BOARD_SIZE)
                                     .setY((y + 0.5) / BOARD_SIZE)
                                     .show()
-                                    .animate{to: {scale: 2}, duration: 600}
+                                    .animate{to: {scale: 2}, duration: 300}
                             click: <>
                                 if not inputBlocked and not boardInputBlocked
                                     if not board.(x).(y).swept
