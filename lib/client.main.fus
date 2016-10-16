@@ -150,7 +150,12 @@ client.onLoad(<>
             getCell(pos).setBackgroundPaint(flagged ? "rgb(255,192,0)" | "rgb(64,64,64)")
 
         ui.setRoot ui.Stack(
-            {backgroundPaint: "rgb(0,0,0)", width: 1, height: 1, padding: ui.Padding("0.5rem")}
+            {
+                backgroundPaint: "rgb(0,0,0)"
+                width: 1
+                height: 1
+                padding: ui.Padding("0.5rem")
+            }
             ui.Stack(
                 {
                     grow: 1
