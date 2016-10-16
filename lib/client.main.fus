@@ -150,7 +150,7 @@ client.onLoad(<>
             getCell(pos).setBackgroundPaint(flagged ? "rgb(255,192,0)" | "rgb(64,64,64)")
 
         ui.setRoot ui.Stack(
-            {backgroundPaint: "rgb(0,0,0)", width: 1, height: 1}
+            {backgroundPaint: "rgb(0,0,0)", width: 1, height: 1, padding: ui.Padding("0.5rem")}
             ui.Stack(
                 {
                     grow: 1
@@ -226,7 +226,7 @@ client.onLoad(<>
                                     .setX((x + 0.5) / BOARD_SIZE)
                                     .setY((y + 0.5) / BOARD_SIZE)
                                     .show()
-                                    .animate{to: {scale: 2}, duration: 300}
+                                    .animate{to: {scale: 2}, duration: 200}
                             click: <>
                                 if not inputBlocked and not boardInputBlocked
                                     if not board.(x).(y).swept
@@ -294,7 +294,7 @@ client.onLoad(<>
                             zIndex: 1
                             width: 1 / BOARD_SIZE * 0.9
                             height: 1 / BOARD_SIZE * 0.9
-                            perspective: 1
+                            perspective: 0.875
                             orientation: "horizontal"
                             frontFace: ui.Board(
                                 {
