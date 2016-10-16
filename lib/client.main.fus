@@ -48,6 +48,7 @@ client.onLoad(<>
 
         inputBlocked: false
         boardInputBlocked: true
+        flipperAnimation: null
 
         getCell: pos -> cells.(pos.x * BOARD_SIZE + pos.y)
 
@@ -61,20 +62,16 @@ client.onLoad(<>
                 cell.getFirstChild().setSource(board.(pos.x).(pos.y).number)
 
         updateCellsAfterSwept: (pos, newlySweptPositions) -> Promise((resolve, reject) ->
-            if board.(pos.x).(pos.y).hasMine
-                flipper.getBackFace().setBackgroundPaint("rgb(255,0,0)")
-                flipper.getBackFace().getFirstChild().setSource("M")
-            else
-                flipper.getBackFace().setBackgroundPaint("rgb(64,96,128)")
-                flipper.getBackFace().getFirstChild().setSource(board.(pos.x).(pos.y).number)
-            flipper
-            .reset()
-            .setX((pos.x + 0.5) / BOARD_SIZE)
-            .setY((pos.y + 0.5) / BOARD_SIZE)
-            .show()
-            getCell(pos).hide()
-            flipper.flip(1, 600)
-            .then(<>
+            (flipper.hasAnimation() ? flipperAnimation | Promise.resolve()).then(<>
+                getCell(pos).hide()
+                flipper.flip(1, 600)
+            ).then(<>
+                Promise..delay(600)
+            ).then(<>
+                console.log("1", Date.now())
+                flipper.animate{to: {scale: 1}, duration: 600}
+            ).then(<>
+                console.log("2", Date.now())
                 if newlySweptPositions.length = 1
                     updateCell(pos)
                     getCell(pos).show()
@@ -123,7 +120,7 @@ client.onLoad(<>
                     scoreBars.(y).animate{to: {opacity: 1}, duration: 200}
                 ).then(<>
                     loop(BOARD_SIZE, x ->
-                        updateCellFlagged({x: x, y: y}, false)
+                        updateCellFlaggedQuick({x: x, y: y}, false)
                         if board.(x).(y).swept
                             cell: getCell{x: x, y: y}
                             cell.setBackgroundPaint("rgb(64,64,64)")
@@ -142,6 +139,14 @@ client.onLoad(<>
         )
 
         updateCellFlagged: (pos, flagged) ->
+            (flipper.hasAnimation() ? flipperAnimation | Promise.resolve()).then(<>
+                flipper.animate{to: {scale: 1}, duration: 600}
+            ).then(<>
+                updateCellFlaggedQuick(pos, flagged)
+            )
+
+        updateCellFlaggedQuick: (pos, flagged) ->
+            flipper.hide()
             getCell(pos).setBackgroundPaint(flagged ? "rgb(255,192,0)" | "rgb(64,64,64)")
 
         ui.setRoot ui.Stack(
@@ -208,6 +213,20 @@ client.onLoad(<>
                             height: 1 / BOARD_SIZE * 0.9
                             backgroundPaint: "rgb(64,64,64)"
                             holdThreshold: 500
+                            pointerDown: <>
+                                if not inputBlocked and not boardInputBlocked
+                                    if board.(x).(y).hasMine
+                                        flipper.getBackFace().setBackgroundPaint("rgb(255,0,0)")
+                                        flipper.getBackFace().getFirstChild().setSource("M")
+                                    else
+                                        flipper.getBackFace().setBackgroundPaint("rgb(64,96,128)")
+                                        flipper.getBackFace().getFirstChild().setSource(board.(x).(y).number)
+                                    flipperAnimation: flipper
+                                    .reset()
+                                    .setX((x + 0.5) / BOARD_SIZE)
+                                    .setY((y + 0.5) / BOARD_SIZE)
+                                    .show()
+                                    .animate{to: {scale: 2}, duration: 600}
                             click: <>
                                 if not inputBlocked and not boardInputBlocked
                                     if not board.(x).(y).swept
@@ -279,7 +298,7 @@ client.onLoad(<>
                             orientation: "horizontal"
                             frontFace: ui.Board(
                                 {
-                                    backgroundPaint: "rgb(64,64,64)"
+                                    backgroundPaint: "rgb(96,96,96)"
                                 }
                             )
                             backFace: ui.Board(
@@ -290,12 +309,13 @@ client.onLoad(<>
                             # IE has a bug with CSS "backface-visibility", so "backface-visibility"
                             # is actually disabled by Site Engine on IE 11.
                             hidesBackFace: client.browser.isIe11
-
                         }
                     ) as flipper
                 ]
             ) as uiBoard
         )
+
+        flipper.raw.style.pointerEvents: "none"
 
         ui.root
         .setFontFamily(
