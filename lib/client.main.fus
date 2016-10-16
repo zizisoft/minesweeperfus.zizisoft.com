@@ -66,12 +66,8 @@ client.onLoad(<>
                 getCell(pos).hide()
                 flipper.flip(1, 400)
             ).then(<>
-                Promise..delay(0)
-            ).then(<>
-                console.log("1", Date.now())
                 flipper.animate{to: {scale: 1}, duration: 200}
             ).then(<>
-                console.log("2", Date.now())
                 if newlySweptPositions.length = 1
                     updateCell(pos)
                     getCell(pos).show()

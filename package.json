@@ -4,7 +4,7 @@
     "private": true,
     "author": "Zhenzhen Zhan <zhanzhenzhen@hotmail.com>",
     "dependencies": {
-        "site": "2.16.0",
+        "site": "2.17.0",
         "babel-polyfill": "6.x"
     },
     "scripts": {
