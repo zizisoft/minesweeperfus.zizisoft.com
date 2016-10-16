@@ -310,13 +310,13 @@ client.onLoad(<>
                             # IE has a bug with CSS "backface-visibility", so "backface-visibility"
                             # is actually disabled by Site Engine on IE 11.
                             hidesBackFace: client.browser.isIe11
+
+                            pointerArea: "none"
                         }
                     ) as flipper
                 ]
             ) as uiBoard
         )
-
-        flipper.raw.style.pointerEvents: "none"
 
         ui.root
         .setFontFamily(
