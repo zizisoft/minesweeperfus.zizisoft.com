@@ -15,6 +15,107 @@ parseElement: s -> DOMParser().parseFromString(s, "application/xml").documentEle
 
 inputBlocked: false
 boardInputBlocked: true
+board: repeat(BOARD_SIZE, <> repeat(BOARD_SIZE, <>
+    {hasMine: false, swept: false, number: 0, flagged: false}
+))
+cells: null
+flipper: null
+scoreBars: null
+
+getCell: pos -> cells.(pos.x * BOARD_SIZE + pos.y)
+
+updateCell: pos ->
+    cell: getCell(pos)
+    if board.(pos.x).(pos.y).hasMine
+        cell.setBackgroundPaint("rgb(255,0,0)")
+        cell.getFirstChild().setSource("M")
+    else
+        cell.setBackgroundPaint("rgb(64,96,128)")
+        cell.getFirstChild().setSource(board.(pos.x).(pos.y).number)
+
+updateCellsAfterSwept: (pos, newlySweptPositions) -> Promise((resolve, reject) ->
+    (flipper.getAnimation() ifnull Promise.resolve()).then(<>
+        getCell(pos).hide()
+        flipper.flip(1, 400)
+    ).then(<>
+        flipper.animate{to: {scale: 1}, duration: 200}
+    ).then(<>
+        if newlySweptPositions.length = 1
+            updateCell(pos)
+            getCell(pos).show()
+            flipper.hide()
+            resolve()
+        else
+            doneCount: 0
+            newlySweptLines: repeat(BOARD_SIZE, <> [])
+            newlySweptPositions.forEach(m ->
+                newlySweptLines.(m.y).push(m.x)
+            )
+            loop(BOARD_SIZE, y ->
+                scoreBars.(y).setZIndex(1)
+            )
+            loop(BOARD_SIZE, y ->
+                Promise..delay(y * 40).then(<>
+                    scoreBars.(y).animate{to: {opacity: 1}, duration: 200}
+                ).then(<>
+                    newlySweptLines.(y).forEach(x ->
+                        updateCell{x: x, y: y}
+                        cell: getCell{x: x, y: y}
+                        if x = pos.x and y = pos.y
+                            cell.show()
+                            flipper.hide()
+                    )
+                    scoreBars.(y).animate{to: {opacity: 0}, duration: 200}
+                ).then(<>
+                    doneCount: self + 1
+                    if doneCount = BOARD_SIZE
+                        loop(BOARD_SIZE, m ->
+                            scoreBars.(m).setZIndex(-1)
+                        )
+                        resolve()
+                )
+            )
+    )
+)
+
+restoreCells: <> Promise((resolve, reject) ->
+    doneCount: 0
+    loop(BOARD_SIZE, y ->
+        scoreBars.(y).setZIndex(1)
+    )
+    loop(BOARD_SIZE, y ->
+        Promise..delay(y * 40).then(<>
+            scoreBars.(y).animate{to: {opacity: 1}, duration: 200}
+        ).then(<>
+            loop(BOARD_SIZE, x ->
+                updateCellFlaggedQuick({x: x, y: y}, false)
+                if board.(x).(y).swept
+                    cell: getCell{x: x, y: y}
+                    cell.setBackgroundPaint("rgb(64,64,64)")
+                    cell.getFirstChild().setSource("")
+            )
+            scoreBars.(y).animate{to: {opacity: 0}, duration: 200}
+        ).then(<>
+            doneCount: self + 1
+            if doneCount = BOARD_SIZE
+                loop(BOARD_SIZE, m ->
+                    scoreBars.(m).setZIndex(-1)
+                )
+                resolve()
+        )
+    )
+)
+
+updateCellFlagged: (pos, flagged) ->
+    (flipper.getAnimation() ifnull Promise.resolve()).then(<>
+        flipper.animate{to: {scale: 1}, duration: 200}
+    ).then(<>
+        updateCellFlaggedQuick(pos, flagged)
+    )
+
+updateCellFlaggedQuick: (pos, flagged) ->
+    flipper.hide()
+    getCell(pos).setBackgroundPaint(flagged ? "rgb(255,192,0)" | "rgb(64,64,64)")
 
 client.autoCloseStartup: false
 
@@ -48,101 +149,6 @@ client.onLoad(<>
             ]]></style>
         ")
         document.head.appendChild(woffStyleElement)
-
-        getCell: pos -> cells.(pos.x * BOARD_SIZE + pos.y)
-
-        updateCell: pos ->
-            cell: getCell(pos)
-            if board.(pos.x).(pos.y).hasMine
-                cell.setBackgroundPaint("rgb(255,0,0)")
-                cell.getFirstChild().setSource("M")
-            else
-                cell.setBackgroundPaint("rgb(64,96,128)")
-                cell.getFirstChild().setSource(board.(pos.x).(pos.y).number)
-
-        updateCellsAfterSwept: (pos, newlySweptPositions) -> Promise((resolve, reject) ->
-            (flipper.getAnimation() ifnull Promise.resolve()).then(<>
-                getCell(pos).hide()
-                flipper.flip(1, 400)
-            ).then(<>
-                flipper.animate{to: {scale: 1}, duration: 200}
-            ).then(<>
-                if newlySweptPositions.length = 1
-                    updateCell(pos)
-                    getCell(pos).show()
-                    flipper.hide()
-                    resolve()
-                else
-                    doneCount: 0
-                    newlySweptLines: repeat(BOARD_SIZE, <> [])
-                    newlySweptPositions.forEach(m ->
-                        newlySweptLines.(m.y).push(m.x)
-                    )
-                    loop(BOARD_SIZE, y ->
-                        scoreBars.(y).setZIndex(1)
-                    )
-                    loop(BOARD_SIZE, y ->
-                        Promise..delay(y * 40).then(<>
-                            scoreBars.(y).animate{to: {opacity: 1}, duration: 200}
-                        ).then(<>
-                            newlySweptLines.(y).forEach(x ->
-                                updateCell{x: x, y: y}
-                                cell: getCell{x: x, y: y}
-                                if x = pos.x and y = pos.y
-                                    cell.show()
-                                    flipper.hide()
-                            )
-                            scoreBars.(y).animate{to: {opacity: 0}, duration: 200}
-                        ).then(<>
-                            doneCount: self + 1
-                            if doneCount = BOARD_SIZE
-                                loop(BOARD_SIZE, m ->
-                                    scoreBars.(m).setZIndex(-1)
-                                )
-                                resolve()
-                        )
-                    )
-            )
-        )
-
-        restoreCells: <> Promise((resolve, reject) ->
-            doneCount: 0
-            loop(BOARD_SIZE, y ->
-                scoreBars.(y).setZIndex(1)
-            )
-            loop(BOARD_SIZE, y ->
-                Promise..delay(y * 40).then(<>
-                    scoreBars.(y).animate{to: {opacity: 1}, duration: 200}
-                ).then(<>
-                    loop(BOARD_SIZE, x ->
-                        updateCellFlaggedQuick({x: x, y: y}, false)
-                        if board.(x).(y).swept
-                            cell: getCell{x: x, y: y}
-                            cell.setBackgroundPaint("rgb(64,64,64)")
-                            cell.getFirstChild().setSource("")
-                    )
-                    scoreBars.(y).animate{to: {opacity: 0}, duration: 200}
-                ).then(<>
-                    doneCount: self + 1
-                    if doneCount = BOARD_SIZE
-                        loop(BOARD_SIZE, m ->
-                            scoreBars.(m).setZIndex(-1)
-                        )
-                        resolve()
-                )
-            )
-        )
-
-        updateCellFlagged: (pos, flagged) ->
-            (flipper.getAnimation() ifnull Promise.resolve()).then(<>
-                flipper.animate{to: {scale: 1}, duration: 200}
-            ).then(<>
-                updateCellFlaggedQuick(pos, flagged)
-            )
-
-        updateCellFlaggedQuick: (pos, flagged) ->
-            flipper.hide()
-            getCell(pos).setBackgroundPaint(flagged ? "rgb(255,192,0)" | "rgb(64,64,64)")
 
         ui.setRoot ui.Stack(
             {
@@ -325,9 +331,6 @@ client.onLoad(<>
             + "\"Lantinghei SC\", \"Microsoft YaHei UI\", \"Microsoft YaHei\", SimHei, sans-serif"
         ).setPaint("rgb(255,255,255)").setStrokeWidth(0.06)
 
-        board: repeat(BOARD_SIZE, <> repeat(BOARD_SIZE, <>
-            {hasMine: false, swept: false, number: 0, flagged: false}
-        ))
         newGameButton.onClick.fire()
 
         resizeHandler: <>
