@@ -2,6 +2,9 @@ fus 2.1.0
 import "babel-polyfill"
 import "./shared.manifest" all
 
+BOARD_SIZE: 9
+MINE_COUNT: 10
+
 shared: import "site/shared"
 import "./shared.main"
 client: import "site/client"
@@ -10,10 +13,11 @@ lit: client.lit
 
 parseElement: s -> DOMParser().parseFromString(s, "application/xml").documentElement
 
-client.autoCloseStartup: false
+inputBlocked: false
+boardInputBlocked: true
+flipperAnimation: null
 
-BOARD_SIZE: 9
-MINE_COUNT: 10
+client.autoCloseStartup: false
 
 if client.browser.deviceType = "computer" and (
     navigator.vendor = "Google Inc." or navigator.vendor = "Apple Computer, Inc."
@@ -45,10 +49,6 @@ client.onLoad(<>
             ]]></style>
         ")
         document.head.appendChild(woffStyleElement)
-
-        inputBlocked: false
-        boardInputBlocked: true
-        flipperAnimation: null
 
         getCell: pos -> cells.(pos.x * BOARD_SIZE + pos.y)
 
