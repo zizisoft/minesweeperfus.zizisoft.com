@@ -15,7 +15,6 @@ parseElement: s -> DOMParser().parseFromString(s, "application/xml").documentEle
 
 inputBlocked: false
 boardInputBlocked: true
-flipperAnimation: null
 
 client.autoCloseStartup: false
 
@@ -62,7 +61,7 @@ client.onLoad(<>
                 cell.getFirstChild().setSource(board.(pos.x).(pos.y).number)
 
         updateCellsAfterSwept: (pos, newlySweptPositions) -> Promise((resolve, reject) ->
-            (flipper.hasAnimation() ? flipperAnimation | Promise.resolve()).then(<>
+            (flipper.getAnimation() ifnull Promise.resolve()).then(<>
                 getCell(pos).hide()
                 flipper.flip(1, 400)
             ).then(<>
@@ -135,7 +134,7 @@ client.onLoad(<>
         )
 
         updateCellFlagged: (pos, flagged) ->
-            (flipper.hasAnimation() ? flipperAnimation | Promise.resolve()).then(<>
+            (flipper.getAnimation() ifnull Promise.resolve()).then(<>
                 flipper.animate{to: {scale: 1}, duration: 200}
             ).then(<>
                 updateCellFlaggedQuick(pos, flagged)
@@ -224,7 +223,7 @@ client.onLoad(<>
                                     else
                                         flipper.getBackFace().setBackgroundPaint("rgb(64,96,128)")
                                         flipper.getBackFace().getFirstChild().setSource(board.(x).(y).number)
-                                    flipperAnimation: flipper
+                                    flipper
                                     .reset()
                                     .setX((x + 0.5) / BOARD_SIZE)
                                     .setY((y + 0.5) / BOARD_SIZE)
