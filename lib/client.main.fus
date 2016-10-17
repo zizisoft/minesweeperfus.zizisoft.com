@@ -151,6 +151,8 @@ client.onLoad(<>
                 width: 1
                 height: 1
                 padding: ui.Padding("0.5rem")
+                scale: 0.000001
+                rotate: "540deg"
             }
             ui.Stack(
                 {
@@ -342,5 +344,9 @@ client.onLoad(<>
         resizeHandler()
 
         client.closeStartup()
+
+        Promise..delay(500).then(<>
+            ui.root.animate{to: {scale: 1, rotate: "0deg"}, duration: 2000, timingFunction: "ease-in"}
+        )
     )
 )
