@@ -13,7 +13,7 @@ lit: client.lit
 
 parseElement: s -> DOMParser().parseFromString(s, "application/xml").documentElement
 
-inputBlocked: false
+inputBlocked: true
 boardInputBlocked: true
 board: repeat(BOARD_SIZE, <> repeat(BOARD_SIZE, <>
     {hasMine: false, swept: false, number: 0, flagged: false}
@@ -21,6 +21,33 @@ board: repeat(BOARD_SIZE, <> repeat(BOARD_SIZE, <>
 cells: null
 flipper: null
 hotBars: null
+
+refreshBoard: <>
+    randomBooleans:
+        spread(true, MINE_COUNT)
+        .concat(spread(false, BOARD_SIZE * BOARD_SIZE - MINE_COUNT))
+        ..random()
+    loop(BOARD_SIZE, x -> loop(BOARD_SIZE, y ->
+        board.(x).(y).hasMine: randomBooleans.(x * BOARD_SIZE + y)
+        board.(x).(y).swept: false
+        board.(x).(y).flagged: false
+    ))
+    getMineCount: (x, y) ->
+        if 0 <= x < BOARD_SIZE and 0 <= y < BOARD_SIZE and board.(x).(y).hasMine
+            1
+        else
+            0
+    loop(BOARD_SIZE, x -> loop(BOARD_SIZE, y ->
+        board.(x).(y).number:
+            getMineCount(x - 1, y)
+            + getMineCount(x + 1, y)
+            + getMineCount(x, y - 1)
+            + getMineCount(x, y + 1)
+            + getMineCount(x - 1, y - 1)
+            + getMineCount(x + 1, y - 1)
+            + getMineCount(x - 1, y + 1)
+            + getMineCount(x + 1, y + 1)
+    ))
 
 getCell: pos -> cells.(pos.x * BOARD_SIZE + pos.y)
 
@@ -180,35 +207,11 @@ client.onLoad(<>
                             inputBlocked: true
                             boardInputBlocked: true
                             restoreCells().then(<>
-                                randomBooleans:
-                                    spread(true, MINE_COUNT)
-                                    .concat(spread(false, BOARD_SIZE * BOARD_SIZE - MINE_COUNT))
-                                    ..random()
-                                loop(BOARD_SIZE, x -> loop(BOARD_SIZE, y ->
-                                    board.(x).(y).hasMine: randomBooleans.(x * BOARD_SIZE + y)
-                                    board.(x).(y).swept: false
-                                    board.(x).(y).flagged: false
-                                ))
-                                getMineCount: (x, y) ->
-                                    if 0 <= x < BOARD_SIZE and 0 <= y < BOARD_SIZE and board.(x).(y).hasMine
-                                        1
-                                    else
-                                        0
-                                loop(BOARD_SIZE, x -> loop(BOARD_SIZE, y ->
-                                    board.(x).(y).number:
-                                        getMineCount(x - 1, y)
-                                        + getMineCount(x + 1, y)
-                                        + getMineCount(x, y - 1)
-                                        + getMineCount(x, y + 1)
-                                        + getMineCount(x - 1, y - 1)
-                                        + getMineCount(x + 1, y - 1)
-                                        + getMineCount(x - 1, y + 1)
-                                        + getMineCount(x + 1, y + 1)
-                                ))
+                                refreshBoard()
                                 inputBlocked: false
                                 boardInputBlocked: false
                             )
-                }) as newGameButton
+                })
             ) as bar
             ui.Board(
                 {aspectRatio: 1}
@@ -331,8 +334,6 @@ client.onLoad(<>
             + "\"Lantinghei SC\", \"Microsoft YaHei UI\", \"Microsoft YaHei\", SimHei, sans-serif"
         ).setPaint("rgb(255,255,255)").setStrokeWidth(0.06)
 
-        newGameButton.onClick.fire()
-
         resizeHandler: <>
             if ui.root.computeWidth() < ui.root.computeHeight()
                 ui.root.setHorizontal(false)
@@ -349,6 +350,10 @@ client.onLoad(<>
 
         Promise..delay(500).then(<>
             ui.root.animate{to: {scale: 1, rotate: "0deg"}, duration: 2000, timingFunction: "ease-in"}
+        ).then(<>
+            refreshBoard()
+            inputBlocked: false
+            boardInputBlocked: false
         )
     )
 )
