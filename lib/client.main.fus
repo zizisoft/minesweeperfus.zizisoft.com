@@ -295,6 +295,7 @@ client.onLoad(<>
                                     inputBlocked: true
                                     boardInputBlocked: true
                                     flipper.animate{to: {scale: 1}, duration: 200}.then(<>
+                                        flipper.hide()
                                         inputBlocked: false
                                         boardInputBlocked: false
                                     )
