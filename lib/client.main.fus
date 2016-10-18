@@ -216,6 +216,7 @@ client.onLoad(<>
             ui.Board(
                 {aspectRatio: 1}
                 (repeat(BOARD_SIZE, x -> repeat(BOARD_SIZE, y ->
+                    clickOrHoldBlocked: false
                     ui.Board(
                         {
                             x: (x + 0.5) / BOARD_SIZE
@@ -226,6 +227,7 @@ client.onLoad(<>
                             holdThreshold: 500
                             pointerDown: <>
                                 if not inputBlocked and not boardInputBlocked
+                                    clickOrHoldBlocked: false
                                     if board.(x).(y).hasMine
                                         flipper.getBackFace().setBackgroundPaint("rgb(255,0,0)")
                                         flipper.getBackFace().getFirstChild().setSource("M")
@@ -239,7 +241,7 @@ client.onLoad(<>
                                     .show()
                                     .animate{to: {scale: 2}, duration: 200}
                             click: <>
-                                if not inputBlocked and not boardInputBlocked
+                                if not inputBlocked and not boardInputBlocked and not clickOrHoldBlocked
                                     if not board.(x).(y).swept
                                         newlySweptPositions: []
                                         inputBlocked: true
@@ -281,7 +283,7 @@ client.onLoad(<>
                                             if remaining.length = MINE_COUNT
                                                 alert("success!")
                             hold: <>
-                                if not inputBlocked and not boardInputBlocked
+                                if not inputBlocked and not boardInputBlocked and not clickOrHoldBlocked
                                     inputBlocked: true
                                     boardInputBlocked: true
                                     board.(x).(y).flagged: not self
@@ -294,6 +296,7 @@ client.onLoad(<>
                                 if not inputBlocked and not boardInputBlocked
                                     inputBlocked: true
                                     boardInputBlocked: true
+                                    clickOrHoldBlocked: true
                                     flipper.animate{to: {scale: 1}, duration: 200}.then(<>
                                         flipper.hide()
                                         inputBlocked: false
