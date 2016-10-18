@@ -282,8 +282,22 @@ client.onLoad(<>
                                                 alert("success!")
                             hold: <>
                                 if not inputBlocked and not boardInputBlocked
+                                    inputBlocked: true
+                                    boardInputBlocked: true
                                     board.(x).(y).flagged: not self
                                     updateCellFlagged({x: x, y: y}, board.(x).(y).flagged)
+                                    .then(<>
+                                        inputBlocked: false
+                                        boardInputBlocked: false
+                                    )
+                            pointerDownLeave: <>
+                                if not inputBlocked and not boardInputBlocked
+                                    inputBlocked: true
+                                    boardInputBlocked: true
+                                    flipper.animate{to: {scale: 1}, duration: 200}.then(<>
+                                        inputBlocked: false
+                                        boardInputBlocked: false
+                                    )
                         }
                         ui.Text({fontSize: 27 / BOARD_SIZE}, "")
                     )
