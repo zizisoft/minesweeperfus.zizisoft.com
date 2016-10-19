@@ -227,7 +227,7 @@ client.onLoad(<>
                             backgroundPaint: "rgb(64,64,64)"
                             holdThreshold: 500
                             pointerDown: <>
-                                if not inputBlocked and not boardInputBlocked
+                                if not inputBlocked and not boardInputBlocked and not board.(x).(y).swept
                                     clickOrHoldBlocked: false
                                     if board.(x).(y).hasMine
                                         flipper.getBackFace().setBackgroundPaint("rgb(255,0,0)")
@@ -243,49 +243,50 @@ client.onLoad(<>
                                     .animate{to: {scale: 2}, duration: 200}
                             click: <>
                                 if not inputBlocked and not boardInputBlocked and not clickOrHoldBlocked
-                                    if not board.(x).(y).swept
-                                        newlySweptPositions: []
-                                        inputBlocked: true
-                                        boardInputBlocked: true
-                                        clickOrHoldBlocked: true
-                                        if board.(x).(y).hasMine
-                                            loop(BOARD_SIZE, m -> loop(BOARD_SIZE, n ->
-                                                if not board.(m).(n).swept
-                                                    board.(m).(n).swept: true
-                                                    newlySweptPositions.push{x: m, y: n}
-                                            ))
-                                            updateCellsAfterSwept({x: x, y: y}, newlySweptPositions)
-                                            .then(<>
-                                                inputBlocked: false
-                                            )
-                                        else
-                                            sweep: pos ->
-                                                trySweep: (px, py) ->
-                                                    if 0 <= px < BOARD_SIZE and 0 <= py < BOARD_SIZE
-                                                        sweep{x: px, y: py}
-                                                if not board.(pos.x).(pos.y).swept
-                                                    board.(pos.x).(pos.y).swept: true
-                                                    newlySweptPositions.push(pos)
-                                                    if board.(pos.x).(pos.y).number = 0
-                                                        trySweep(pos.x - 1, pos.y)
-                                                        trySweep(pos.x + 1, pos.y)
-                                                        trySweep(pos.x, pos.y - 1)
-                                                        trySweep(pos.x, pos.y + 1)
-                                                        trySweep(pos.x - 1, pos.y - 1)
-                                                        trySweep(pos.x + 1, pos.y - 1)
-                                                        trySweep(pos.x - 1, pos.y + 1)
-                                                        trySweep(pos.x + 1, pos.y + 1)
-                                            sweep{x: x, y: y}
-                                            updateCellsAfterSwept({x: x, y: y}, newlySweptPositions)
-                                            .then(<>
-                                                inputBlocked: false
-                                                boardInputBlocked: false
-                                            )
-                                            remaining: board..flatten().filter(m -> not m.swept)
-                                            if remaining.length = MINE_COUNT
-                                                alert("success!")
+                                and not board.(x).(y).swept
+                                    newlySweptPositions: []
+                                    inputBlocked: true
+                                    boardInputBlocked: true
+                                    clickOrHoldBlocked: true
+                                    if board.(x).(y).hasMine
+                                        loop(BOARD_SIZE, m -> loop(BOARD_SIZE, n ->
+                                            if not board.(m).(n).swept
+                                                board.(m).(n).swept: true
+                                                newlySweptPositions.push{x: m, y: n}
+                                        ))
+                                        updateCellsAfterSwept({x: x, y: y}, newlySweptPositions)
+                                        .then(<>
+                                            inputBlocked: false
+                                        )
+                                    else
+                                        sweep: pos ->
+                                            trySweep: (px, py) ->
+                                                if 0 <= px < BOARD_SIZE and 0 <= py < BOARD_SIZE
+                                                    sweep{x: px, y: py}
+                                            if not board.(pos.x).(pos.y).swept
+                                                board.(pos.x).(pos.y).swept: true
+                                                newlySweptPositions.push(pos)
+                                                if board.(pos.x).(pos.y).number = 0
+                                                    trySweep(pos.x - 1, pos.y)
+                                                    trySweep(pos.x + 1, pos.y)
+                                                    trySweep(pos.x, pos.y - 1)
+                                                    trySweep(pos.x, pos.y + 1)
+                                                    trySweep(pos.x - 1, pos.y - 1)
+                                                    trySweep(pos.x + 1, pos.y - 1)
+                                                    trySweep(pos.x - 1, pos.y + 1)
+                                                    trySweep(pos.x + 1, pos.y + 1)
+                                        sweep{x: x, y: y}
+                                        updateCellsAfterSwept({x: x, y: y}, newlySweptPositions)
+                                        .then(<>
+                                            inputBlocked: false
+                                            boardInputBlocked: false
+                                        )
+                                        remaining: board..flatten().filter(m -> not m.swept)
+                                        if remaining.length = MINE_COUNT
+                                            alert("success!")
                             hold: <>
                                 if not inputBlocked and not boardInputBlocked and not clickOrHoldBlocked
+                                and not board.(x).(y).swept
                                     inputBlocked: true
                                     boardInputBlocked: true
                                     clickOrHoldBlocked: true
@@ -296,7 +297,7 @@ client.onLoad(<>
                                         boardInputBlocked: false
                                     )
                             pointerDownLeave: <>
-                                if not inputBlocked and not boardInputBlocked
+                                if not inputBlocked and not boardInputBlocked and not board.(x).(y).swept
                                     inputBlocked: true
                                     boardInputBlocked: true
                                     clickOrHoldBlocked: true
