@@ -15,6 +15,7 @@ parseElement: s -> DOMParser().parseFromString(s, "application/xml").documentEle
 
 inputBlocked: true
 boardInputBlocked: true
+clickOrHoldBlocked: true
 board: repeat(BOARD_SIZE, <> repeat(BOARD_SIZE, <>
     {hasMine: false, swept: false, number: 0, flagged: false}
 ))
@@ -206,6 +207,7 @@ client.onLoad(<>
                         if not inputBlocked
                             inputBlocked: true
                             boardInputBlocked: true
+                            clickOrHoldBlocked: true
                             restoreCells().then(<>
                                 refreshBoard()
                                 inputBlocked: false
@@ -216,7 +218,6 @@ client.onLoad(<>
             ui.Board(
                 {aspectRatio: 1}
                 (repeat(BOARD_SIZE, x -> repeat(BOARD_SIZE, y ->
-                    clickOrHoldBlocked: false
                     ui.Board(
                         {
                             x: (x + 0.5) / BOARD_SIZE
@@ -246,6 +247,7 @@ client.onLoad(<>
                                         newlySweptPositions: []
                                         inputBlocked: true
                                         boardInputBlocked: true
+                                        clickOrHoldBlocked: true
                                         if board.(x).(y).hasMine
                                             loop(BOARD_SIZE, m -> loop(BOARD_SIZE, n ->
                                                 if not board.(m).(n).swept
@@ -286,6 +288,7 @@ client.onLoad(<>
                                 if not inputBlocked and not boardInputBlocked and not clickOrHoldBlocked
                                     inputBlocked: true
                                     boardInputBlocked: true
+                                    clickOrHoldBlocked: true
                                     board.(x).(y).flagged: not self
                                     updateCellFlagged({x: x, y: y}, board.(x).(y).flagged)
                                     .then(<>
@@ -302,6 +305,8 @@ client.onLoad(<>
                                         inputBlocked: false
                                         boardInputBlocked: false
                                     )
+                            pointerUp: <>
+                                clickOrHoldBlocked: true
                         }
                         ui.Text({fontSize: 27 / BOARD_SIZE}, "")
                     )
