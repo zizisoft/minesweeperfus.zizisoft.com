@@ -359,7 +359,9 @@ client.onLoad(<>
         ).setPaint("rgb(255,255,255)").setStrokeWidth(0.06)
 
         resizeHandler: <>
-            if ui.root.computeWidth() < ui.root.computeHeight()
+            # Do not use `ui.root.computeWidth` and `ui.root.computeHeight` because sometimes these 2
+            # are delayed. So use `window.innerWidth` and `window.innerHeight` instead.
+            if window.innerWidth < window.innerHeight
                 ui.root.setHorizontal(false)
                 bar.setHorizontal(true)
                 uiBoard.setSize(1, "auto")
