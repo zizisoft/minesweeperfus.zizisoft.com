@@ -16,7 +16,7 @@ server.onRequest ctx ->
         response.handleFile()
 server.host:
     if shared.isDebug()
-        fs.readFileSync("ip.txt", "utf8").trim()
+        fsMod.readFileSync("ip.txt", "utf8").trim()
     else
         void
 server.httpPort: 50007
@@ -32,7 +32,7 @@ server.httpsCredential: {
 }
 server.password:
     if shared.isDebug()
-        fs.readFileSync("password.txt", "utf8").trim()
+        fsMod.readFileSync("password.txt", "utf8").trim()
     else
         null
 server.maxRequestBodySize: 65536
