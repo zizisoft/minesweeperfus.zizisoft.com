@@ -16,7 +16,7 @@ server.onRequest ctx ->
         response.handleFile()
 server.host:
     if shared.isDebug()
-        "127.0.0.1"
+        fs.readFileSync("ip.txt", "utf8").trim()
     else
         void
 server.httpPort: 50007
@@ -30,6 +30,11 @@ server.httpsEnabled: true
 server.httpsCredential: {
     pfx: fsMod.readFileSync("credential.p12")
 }
+server.password:
+    if shared.isDebug()
+        fs.readFileSync("password.txt", "utf8").trim()
+    else
+        null
 server.maxRequestBodySize: 65536
 server.homePageAfterScript: "
     <script><![CDATA[
