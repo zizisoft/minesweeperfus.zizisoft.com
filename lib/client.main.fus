@@ -58,10 +58,20 @@ updateCell: pos ->
 updateCellOrFlipper: (element, pos) ->
     if board.(pos.x).(pos.y).hasMine
         element.setBackgroundPaint("rgb(255,0,0)")
-        element.getFirstChild().setSource("M")
+        element.getFirstChild().setSource("㊉")
     else
-        element.setBackgroundPaint("rgb(64,96,128)")
-        element.getFirstChild().setSource(board.(pos.x).(pos.y).number)
+        element.setBackgroundPaint(
+            if board.(pos.x).(pos.y).number = 0
+                "rgb(64,112,144)"
+            else
+                "rgb(112,160,96)"
+        )
+        element.getFirstChild().setSource(
+            if board.(pos.x).(pos.y).number = 0
+                ""
+            else
+                board.(pos.x).(pos.y).number
+        )
 
 updateCellsAfterSwept: (pos, newlySweptPositions) -> Promise((resolve, reject) ->
     (flipper.getAnimation() ifnull Promise.resolve()).then(<>
