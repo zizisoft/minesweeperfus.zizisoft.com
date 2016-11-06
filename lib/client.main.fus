@@ -360,8 +360,9 @@ client.onLoad(<>
 
         resizeHandler: <>
             # Do not use `ui.root.computeWidth` and `ui.root.computeHeight` because sometimes these 2
-            # are delayed. So use `window.innerWidth` and `window.innerHeight` instead.
-            if window.innerWidth < window.innerHeight
+            # are delayed. So use `ui.getSize` instead.
+            viewportSize: ui.getSize()
+            if viewportSize.x < viewportSize.y
                 ui.root.setHorizontal(false)
                 bar.setHorizontal(true)
                 uiBoard.setSize(1, "auto")
