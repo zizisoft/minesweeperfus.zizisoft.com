@@ -215,22 +215,27 @@ client.onLoad(<>
                     {childSpacing: "1rem"}
                     ui.Text(lit.title, {fontSize: 5, textAlignment: "center"})
                     ui.Text(lit.hint, {fontSize: 1.8, textAlignment: "center"})
+                    ui.Element{grow: 0.2}
+                    ui.Button(lit.newGame, {
+                        grow: 0.6
+                        #shrink: 1
+                        fontSize: 2.4
+                        border: {width: "0.1em", paint: "rgb(255,255,255)"}
+                        padding: ui.Padding("0.75em", "0.75em")
+                        click: <>
+                            if not inputBlocked
+                                inputBlocked: true
+                                boardInputBlocked: true
+                                clickOrHoldBlocked: true
+                                restoreCells().then(<>
+                                    refreshBoard()
+                                    inputBlocked: false
+                                    boardInputBlocked: false
+                                )
+                    })
+                    ui.Element{grow: 0.2}
                 )
-                ui.Button(lit.newGame, {
-                    fontSize: 2.4
-                    border: {width: "0.1em", paint: "rgb(255,255,255)"}
-                    padding: ui.Padding("0.75em", "0.75em")
-                    click: <>
-                        if not inputBlocked
-                            inputBlocked: true
-                            boardInputBlocked: true
-                            clickOrHoldBlocked: true
-                            restoreCells().then(<>
-                                refreshBoard()
-                                inputBlocked: false
-                                boardInputBlocked: false
-                            )
-                })
+                ui.Text({fontSize: 13.5 / BOARD_SIZE}, "")
             ) as bar
             ui.Board(
                 {aspectRatio: 1}
