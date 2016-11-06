@@ -288,14 +288,15 @@ client.onLoad(<>
                                                     trySweep(pos.x - 1, pos.y + 1)
                                                     trySweep(pos.x + 1, pos.y + 1)
                                         sweep{x: x, y: y}
+                                        remaining: board..flatten().filter(m -> not m.swept)
                                         updateCellsAfterSwept({x: x, y: y}, newlySweptPositions)
                                         .then(<>
                                             inputBlocked: false
-                                            boardInputBlocked: false
+                                            if remaining.length > MINE_COUNT
+                                                boardInputBlocked: false
+                                            else
+                                                alert("success!")
                                         )
-                                        remaining: board..flatten().filter(m -> not m.swept)
-                                        if remaining.length = MINE_COUNT
-                                            alert("success!")
                             hold: <>
                                 if not inputBlocked and not boardInputBlocked and not clickOrHoldBlocked
                                 and not board.(x).(y).swept
