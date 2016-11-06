@@ -58,7 +58,7 @@ updateCell: pos ->
 updateCellOrFlipper: (element, pos) ->
     if board.(pos.x).(pos.y).hasMine
         element.setBackgroundPaint("rgb(255,0,0)")
-        element.getFirstChild().setSource("⨶")
+        element.getFirstChild().setSource("✹")
     else
         num: board.(pos.x).(pos.y).number
         element.setBackgroundPaint(
