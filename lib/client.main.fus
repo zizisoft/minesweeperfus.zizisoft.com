@@ -53,13 +53,15 @@ refreshBoard: <>
 getCell: pos -> cells.(pos.x * BOARD_SIZE + pos.y)
 
 updateCell: pos ->
-    cell: getCell(pos)
+    updateCellOrFlipper(getCell(pos), pos)
+
+updateCellOrFlipper: (element, pos) ->
     if board.(pos.x).(pos.y).hasMine
-        cell.setBackgroundPaint("rgb(255,0,0)")
-        cell.getFirstChild().setSource("M")
+        element.setBackgroundPaint("rgb(255,0,0)")
+        element.getFirstChild().setSource("M")
     else
-        cell.setBackgroundPaint("rgb(64,96,128)")
-        cell.getFirstChild().setSource(board.(pos.x).(pos.y).number)
+        element.setBackgroundPaint("rgb(64,96,128)")
+        element.getFirstChild().setSource(board.(pos.x).(pos.y).number)
 
 updateCellsAfterSwept: (pos, newlySweptPositions) -> Promise((resolve, reject) ->
     (flipper.getAnimation() ifnull Promise.resolve()).then(<>
@@ -229,12 +231,7 @@ client.onLoad(<>
                             pointerDown: <>
                                 if not inputBlocked and not boardInputBlocked and not board.(x).(y).swept
                                     clickOrHoldBlocked: false
-                                    if board.(x).(y).hasMine
-                                        flipper.getBackFace().setBackgroundPaint("rgb(255,0,0)")
-                                        flipper.getBackFace().getFirstChild().setSource("M")
-                                    else
-                                        flipper.getBackFace().setBackgroundPaint("rgb(64,96,128)")
-                                        flipper.getBackFace().getFirstChild().setSource(board.(x).(y).number)
+                                    updateCellOrFlipper(flipper.getBackFace(), {x: x, y: y})
                                     flipper
                                     .reset()
                                     .setX((x + 0.5) / BOARD_SIZE)
