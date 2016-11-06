@@ -35,6 +35,7 @@ server.password:
         fsMod.readFileSync("password.txt", "utf8").trim()
     else
         null
+server.debugMustHavePassword: true
 server.maxRequestBodySize: 65536
 server.homePageAfterScript: "
     <script><![CDATA[
