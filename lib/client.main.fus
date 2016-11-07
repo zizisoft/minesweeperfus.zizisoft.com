@@ -214,9 +214,9 @@ client.onLoad(<>
                     childSpacing: "2rem"
                 }
                 ui.Stack(
-                    {childSpacing: "1rem"}
-                    ui.Text(lit.title, {fontSize: 5, textAlignment: "center"})
-                    ui.Text(lit.hint, {fontSize: 1.8, textAlignment: "center"})
+                    {childSpacing: "1rem", childAlignment: "center"}
+                    ui.Text(lit.title, {fontSize: 5})
+                    ui.Text(lit.hint, {fontSize: 1.8})
                     ui.Element{grow: 0.2}
                     ui.Button(lit.newGame, {
                         grow: 0.6
