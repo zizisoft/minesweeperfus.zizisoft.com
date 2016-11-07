@@ -195,6 +195,8 @@ client.onLoad(<>
         ")
         document.head.appendChild(woffStyleElement)
 
+        document.body.style.backgroundColor: "rgb(0,0,0)"
+
         ui.setRoot ui.Stack(
             {
                 backgroundPaint: "rgb(0,0,0)"
