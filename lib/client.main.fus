@@ -223,7 +223,9 @@ client.onLoad(<>
                         #shrink: 1
                         fontSize: 2.4
                         border: {width: "0.1em", paint: "rgb(255,255,255)"}
-                        padding: ui.Padding("0.75em", "0.75em")
+                        borderRadius: "2em"
+                        padding: ui.Padding("1.5em", "0.75em")
+                        backgroundPaint: "rgb(48,80,128)"
                         click: <>
                             if not inputBlocked
                                 inputBlocked: true
