@@ -383,9 +383,20 @@ client.onLoad(<>
             if viewportSize.x < viewportSize.y
                 ui.root.setHorizontal(false)
                 bar.setHorizontal(true)
-                uiBoard.setSize(1, "auto")
+                if viewportSize.x / viewportSize.y < 0.8
+                    if viewportSize.x / viewportSize.y < 0.72
+                        ui.setRem(0.018)
+                    else
+                        ui.setRem(0.013)
+                    ui.root.setWidth(1).setHeight(1)
+                    uiBoard.setSize(1, "auto")
+                else
+                    ui.root.setWidth("auto").setHeight(1)
+                    ui.setRem(0.01)
+                    uiBoard.setSize("auto", 0.8)
             else
-                ui.root.setHorizontal(true)
+                ui.setRem(0.018)
+                ui.root.setHorizontal(true).setWidth(1).setHeight(1)
                 bar.setHorizontal(false)
                 uiBoard.setSize("auto", 1)
         ui.onResize(resizeHandler)
