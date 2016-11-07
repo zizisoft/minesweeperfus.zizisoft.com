@@ -22,6 +22,8 @@ board: repeat(BOARD_SIZE, <> repeat(BOARD_SIZE, <>
 cells: null
 flipper: null
 hotBars: null
+timer: null
+timerElement: null
 
 refreshBoard: <>
     randomBooleans:
@@ -49,6 +51,14 @@ refreshBoard: <>
             + getMineCount(x - 1, y + 1)
             + getMineCount(x + 1, y + 1)
     ))
+
+resetTimer: <>
+    if timer'ok
+        timer.stop()
+    timer: IntervalTimer()
+    timer.onArrive(e ->
+        timerElement.setSource(e.index)
+    )
 
 getCell: pos -> cells.(pos.x * BOARD_SIZE + pos.y)
 
@@ -212,6 +222,7 @@ client.onLoad(<>
                     shrink: 1
                     padding: ui.Padding("1rem", "1rem")
                     childSpacing: "2rem"
+                    childAlignment: "center"
                 }
                 ui.Stack(
                     {childSpacing: "1rem", childAlignment: "center"}
@@ -233,13 +244,16 @@ client.onLoad(<>
                                 clickOrHoldBlocked: true
                                 restoreCells().then(<>
                                     refreshBoard()
+                                    resetTimer()
                                     inputBlocked: false
                                     boardInputBlocked: false
                                 )
                     })
                     ui.Element{grow: 0.2}
                 )
-                ui.Text({fontSize: 13.5 / BOARD_SIZE}, "")
+                ui.Element{grow: 0.5}
+                ui.Text({fontSize: 108 / BOARD_SIZE, paint: "rgb(192,0,0)"}, "") as timerElement
+                ui.Element{grow: 0.5}
             ) as bar
             ui.Board(
                 {aspectRatio: 1}
@@ -270,6 +284,7 @@ client.onLoad(<>
                                     boardInputBlocked: true
                                     clickOrHoldBlocked: true
                                     if board.(x).(y).hasMine
+                                        timer.stop()
                                         loop(BOARD_SIZE, m -> loop(BOARD_SIZE, n ->
                                             if not board.(m).(n).swept
                                                 board.(m).(n).swept: true
@@ -304,6 +319,7 @@ client.onLoad(<>
                                             if remaining.length > MINE_COUNT
                                                 boardInputBlocked: false
                                             else
+                                                timer.stop()
                                                 alert("success!")
                                         )
                             hold: <>
@@ -421,6 +437,7 @@ client.onLoad(<>
             ui.root.animate{to: {scale: 1, rotate: "0deg"}, duration: 2000, timingFunction: "ease-in"}
         ).then(<>
             refreshBoard()
+            resetTimer()
             inputBlocked: false
             boardInputBlocked: false
         )
