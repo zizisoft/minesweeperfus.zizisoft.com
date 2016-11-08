@@ -170,7 +170,7 @@ showWinElement: <>
 
 hideWinElement: <>
     if winElement.getScale().x > 0.1
-        winElement.animate{to: {scale: 0.000001}, duration: 200, timingFunction: "ease-out"}
+        winElement.animate{to: {scale: 0.000001}, duration: 300, timingFunction: "ease-out"}
     else
         Promise.resolve()
 
