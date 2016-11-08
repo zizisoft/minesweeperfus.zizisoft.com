@@ -26,6 +26,7 @@ timer: null
 timerElement: null
 bar: null
 uiBoard: null
+winElement: null
 
 refreshBoard: <>
     randomBooleans:
@@ -150,6 +151,18 @@ animateAfterTouchMine: <>
     uiBoard.animate{from: {opacity: 0}, to: {opacity: 1}, duration: 2000}
     ui.root.setBackgroundPaint("rgb(255,0,0)").animate{to: {backgroundPaint: "rgb(0,0,0)"}, duration: 2000}
 
+showWinElement: <>
+    if winElement.getScale().x < 0.9
+        winElement.animate{to: {scale: 1}, duration: 1000}
+    else
+        Promise.resolve()
+
+hideWinElement: <>
+    if winElement.getScale().x > 0.1
+        winElement.animate{to: {scale: 0.000001}, duration: 1000}
+    else
+        Promise.resolve()
+
 restoreCells: <> Promise((resolve, reject) ->
     doneCount: 0
     loop(BOARD_SIZE, y ->
@@ -260,7 +273,9 @@ client.onLoad(<>
                                 inputBlocked: true
                                 boardInputBlocked: true
                                 clickOrHoldBlocked: true
-                                restoreCells().then(<>
+                                hideWinElement().then(<>
+                                    restoreCells()
+                                ).then(<>
                                     refreshBoard()
                                     resetTimer()
                                     inputBlocked: false
@@ -331,14 +346,17 @@ client.onLoad(<>
                                                     trySweep(pos.x + 1, pos.y + 1)
                                         sweep{x: x, y: y}
                                         remaining: board..flatten().filter(m -> not m.swept)
+                                        if remaining.length = MINE_COUNT
+                                            timer.stop()
                                         updateCellsAfterSwept({x: x, y: y}, newlySweptPositions)
                                         .then(<>
-                                            inputBlocked: false
                                             if remaining.length > MINE_COUNT
+                                                inputBlocked: false
                                                 boardInputBlocked: false
                                             else
-                                                timer.stop()
-                                                alert("success!")
+                                                showWinElement().then(<>
+                                                    inputBlocked: false
+                                                )
                                         )
                             hold: <>
                                 if not inputBlocked and not boardInputBlocked and not clickOrHoldBlocked
@@ -404,6 +422,16 @@ client.onLoad(<>
                             pointerArea: "none"
                         }
                     ) as flipper
+                    ui.Text(
+                        {
+                            scale: 0.000001
+                            fontSize: ui.RatioLength(1)
+                            width: 0.5
+                            height: 0.5
+                            zIndex: 1
+                        }
+                        "🙂"
+                    ) as winElement
                 ]
             ) as uiBoard
             ui.Element{grow: 0.4}
