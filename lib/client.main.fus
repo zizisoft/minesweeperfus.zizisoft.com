@@ -142,6 +142,10 @@ animateAfterTouchMine: <>
             updateCell{x: x, y: y}
         ))
     )
+
+    # This code is to simulate an "overlay" effect. Note that it's bad to add a `ui.Board` wrapper to
+    # hold the overlay, because it makes DOM deeper that will cause performance issues.
+    # So we here change the opacity of children to make it look as if there's an overlay.
     bar.animate{from: {opacity: 0}, to: {opacity: 1}, duration: 2000}
     uiBoard.animate{from: {opacity: 0}, to: {opacity: 1}, duration: 2000}
     ui.root.setBackgroundPaint("rgb(255,0,0)").animate{to: {backgroundPaint: "rgb(0,0,0)"}, duration: 2000}
