@@ -253,7 +253,7 @@ client.onLoad(<>
                     ui.Element{grow: 0.2}
                 )
                 ui.Element{grow: 0.5}
-                ui.Text({fontSize: 12, paint: "rgb(192,0,0)"}, "") as timerElement
+                ui.Text({fontSize: 10, paint: "rgb(192,0,0)"}, "") as timerElement
                 ui.Element{grow: 0.5}
             ) as bar
             ui.Element{grow: 0.2}
