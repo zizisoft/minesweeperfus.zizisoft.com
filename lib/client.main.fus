@@ -163,7 +163,7 @@ showWinElement: <>
                 "0.667": {rotate: "10deg", scale: 1, timingFunction: "ease"}
                 "1": {rotate: "0deg", scale: 1, timingFunction: "ease"}
             }
-            duration: 1000
+            duration: 1500
         }
     else
         Promise.resolve()
