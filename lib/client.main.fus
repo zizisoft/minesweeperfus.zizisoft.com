@@ -214,9 +214,11 @@ client.onLoad(<>
     Promise.all[
         web.binaryGet("/3rd-party/SourceCodePro-Regular.otf.woff")
         web.binaryGet("/3rd-party/kaushan-script.woff")
+        web.binaryGet("/smiling-face.png")
     ].then(resources ->
         sourceCodeProUri: "data:application/font-woff;base64," + resources.0.body..toBase64()
         kaushanScriptUri: "data:application/font-woff;base64," + resources.1.body..toBase64()
+        smilingFaceUri: "data:image/png;base64," + resources.2.body..toBase64()
         woffStyleElement: parseElement("
             <style type="text/css" xmlns="http://www.w3.org/1999/xhtml"><![CDATA[
                 @font-face {
@@ -422,15 +424,14 @@ client.onLoad(<>
                             pointerArea: "none"
                         }
                     ) as flipper
-                    ui.Text(
+                    ui.Image(
                         {
                             scale: 0.000001
-                            fontSize: ui.RatioLength(1)
                             width: 0.5
                             height: 0.5
                             zIndex: 1
                         }
-                        "🙂"
+                        smilingFaceUri
                     ) as winElement
                 ]
             ) as uiBoard
