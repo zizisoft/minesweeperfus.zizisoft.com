@@ -157,13 +157,20 @@ animateAfterTouchMine: <>
 
 showWinElement: <>
     if winElement.getScale().x < 0.9
-        winElement.animate{to: {scale: 1}, duration: 1000, timingFunction: "ease-out"}
+        winElement.animate{
+            keyframes: {
+                "0.333": {scale: 1, timingFunction: "ease-out"}
+                "0.667": {rotate: "10deg", scale: 1, timingFunction: "ease"}
+                "1": {rotate: "0deg", scale: 1, timingFunction: "ease"}
+            }
+            duration: 1000
+        }
     else
         Promise.resolve()
 
 hideWinElement: <>
     if winElement.getScale().x > 0.1
-        winElement.animate{to: {scale: 0.000001}, duration: 1000, timingFunction: "ease-out"}
+        winElement.animate{to: {scale: 0.000001}, duration: 200, timingFunction: "ease-out"}
     else
         Promise.resolve()
 
