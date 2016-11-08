@@ -252,11 +252,11 @@ client.onLoad(<>
                     ui.Element{grow: 0.2}
                 )
                 ui.Element{grow: 0.5}
-                ui.Text({fontSize: 108 / BOARD_SIZE, paint: "rgb(192,0,0)"}, "") as timerElement
+                ui.Text({fontSize: 12, paint: "rgb(192,0,0)"}, "") as timerElement
                 ui.Element{grow: 0.5}
             ) as bar
             ui.Board(
-                {aspectRatio: 1}
+                {aspectRatio: 1, fontSize: ui.RatioLength(1 / BOARD_SIZE * 0.5)}
                 (repeat(BOARD_SIZE, x -> repeat(BOARD_SIZE, y ->
                     ui.Board(
                         {
@@ -347,7 +347,7 @@ client.onLoad(<>
                             pointerUp: <>
                                 clickOrHoldBlocked: true
                         }
-                        ui.Text({fontSize: 27 / BOARD_SIZE}, "")
+                        ui.Text("")
                     )
                 ))..flatten() as cells).concat(
                     repeat(BOARD_SIZE, y ->
@@ -375,7 +375,7 @@ client.onLoad(<>
                                 }
                             )
                             backFace: ui.Board(
-                                ui.Text({fontSize: 27 / BOARD_SIZE}, "")
+                                ui.Text("")
                             )
 
                             # If don't hide then IE 11 may show a very slim border. That's because
