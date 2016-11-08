@@ -147,19 +147,23 @@ animateAfterTouchMine: <>
     # This code is to simulate an "overlay" effect. Note that it's bad to add a `ui.Board` wrapper to
     # hold the overlay, because it makes DOM deeper that will cause performance issues.
     # So we here change the opacity of children to make it look as if there's an overlay.
-    bar.animate{from: {opacity: 0}, to: {opacity: 1}, duration: 2000}
-    uiBoard.animate{from: {opacity: 0}, to: {opacity: 1}, duration: 2000}
-    ui.root.setBackgroundPaint("rgb(255,0,0)").animate{to: {backgroundPaint: "rgb(0,0,0)"}, duration: 2000}
+    bar.animate{from: {opacity: 0}, to: {opacity: 1}, duration: 3000, timingFunction: "ease-out"}
+    uiBoard.animate{from: {opacity: 0}, to: {opacity: 1}, duration: 3000, timingFunction: "ease-out"}
+    ui.root.setBackgroundPaint("rgb(255,0,0)").animate{
+        to: {backgroundPaint: "rgb(0,0,0)"}
+        duration: 3000
+        timingFunction: "ease-out"
+    }
 
 showWinElement: <>
     if winElement.getScale().x < 0.9
-        winElement.animate{to: {scale: 1}, duration: 1000}
+        winElement.animate{to: {scale: 1}, duration: 1000, timingFunction: "ease-out"}
     else
         Promise.resolve()
 
 hideWinElement: <>
     if winElement.getScale().x > 0.1
-        winElement.animate{to: {scale: 0.000001}, duration: 1000}
+        winElement.animate{to: {scale: 0.000001}, duration: 1000, timingFunction: "ease-out"}
     else
         Promise.resolve()
 
