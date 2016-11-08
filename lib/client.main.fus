@@ -24,6 +24,8 @@ flipper: null
 hotBars: null
 timer: null
 timerElement: null
+bar: null
+uiBoard: null
 
 refreshBoard: <>
     randomBooleans:
@@ -132,6 +134,17 @@ updateCellsAfterSwept: (pos, newlySweptPositions) -> Promise((resolve, reject) -
             )
     )
 )
+
+animateAfterTouchMine: <>
+    Promise..delay(100).then(<>
+        flipper.stopAnimation().setScale(1).hide()
+        loop(BOARD_SIZE, x -> loop(BOARD_SIZE, y ->
+            updateCell{x: x, y: y}
+        ))
+    )
+    bar.animate{from: {opacity: 0}, to: {opacity: 1}, duration: 2000}
+    uiBoard.animate{from: {opacity: 0}, to: {opacity: 1}, duration: 2000}
+    ui.root.setBackgroundPaint("rgb(255,0,0)").animate{to: {backgroundPaint: "rgb(0,0,0)"}, duration: 2000}
 
 restoreCells: <> Promise((resolve, reject) ->
     doneCount: 0
@@ -292,8 +305,7 @@ client.onLoad(<>
                                                 board.(m).(n).swept: true
                                                 newlySweptPositions.push{x: m, y: n}
                                         ))
-                                        updateCellsAfterSwept({x: x, y: y}, newlySweptPositions)
-                                        .then(<>
+                                        animateAfterTouchMine().then(<>
                                             inputBlocked: false
                                         )
                                     else
