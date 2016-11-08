@@ -216,10 +216,11 @@ client.onLoad(<>
                 scale: 0.000001
                 rotate: "540deg"
             }
+            ui.Element{grow: 0.4}
             ui.Stack(
                 {
-                    grow: 1
-                    shrink: 1
+                    #grow: 1
+                    #shrink: 1
                     padding: ui.Padding("1rem", "1rem")
                     childSpacing: "2rem"
                     childAlignment: "center"
@@ -255,6 +256,7 @@ client.onLoad(<>
                 ui.Text({fontSize: 12, paint: "rgb(192,0,0)"}, "") as timerElement
                 ui.Element{grow: 0.5}
             ) as bar
+            ui.Element{grow: 0.2}
             ui.Board(
                 {aspectRatio: 1, fontSize: ui.RatioLength(1 / BOARD_SIZE * 0.5)}
                 (repeat(BOARD_SIZE, x -> repeat(BOARD_SIZE, y ->
@@ -388,6 +390,7 @@ client.onLoad(<>
                     ) as flipper
                 ]
             ) as uiBoard
+            ui.Element{grow: 0.4}
         )
 
         ui.root
