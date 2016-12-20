@@ -1,4 +1,4 @@
-fus 2.2.3
+fus 2.3.0
 import "babel-polyfill"
 import "./shared.manifest" all
 
