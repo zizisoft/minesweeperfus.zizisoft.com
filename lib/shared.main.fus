@@ -8,6 +8,8 @@ shared.lits: [
         title: "Minesweeper"
         description: "Minesweeper Game"
         keywords: "minesweeper, game"
+        poweredBy: "Powered by Zizisoft Site Engine"
+        github: "GitHub"
         newGame: "New Game"
         hint: "Click to sweep. Hold to flag."
     }
@@ -16,6 +18,7 @@ shared.lits: [
         title: "扫雷"
         description: "扫雷游戏"
         keywords: "扫雷, 游戏"
+        poweredBy: "采用 Zizisoft Site Engine"
         newGame: "新局"
         hint: "点击以扫除，按住以标记。"
     }

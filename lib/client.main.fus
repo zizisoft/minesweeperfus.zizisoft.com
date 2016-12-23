@@ -272,6 +272,28 @@ client.onLoad(<>
                 ui.Stack(
                     {childSpacing: "1rem", childAlignment: "center"}
                     ui.Text(lit.title, {fontSize: 5})
+                    ui.Stack(
+                        {
+                            horizontal: true
+                            childSpacing: "1.5rem"
+                        }
+                        ui.Text(
+                            lit.poweredBy
+                            {
+                                click: <>
+                                    location.href: "http://zizisoft.com/site"
+                                fontSize: 1.3
+                            }
+                        )
+                        ui.Text(
+                            lit.github
+                            {
+                                click: <>
+                                    location.href: "https://github.com/zizisoft/minesweeperfus.zizisoft.com"
+                                fontSize: 1.3
+                            }
+                        )
+                    )
                     ui.Text(lit.hint, {fontSize: 1.8})
                     ui.Element{grow: 0.2}
                     ui.Button(lit.newGame, {
