@@ -20,7 +20,7 @@ shared.lits: [
         keywords: "扫雷, 游戏"
         poweredBy: "采用 Zizisoft Site Engine"
         newGame: "新局"
-        hint: "点击以扫除，按住以标记。"
+        hint: "点击以扫除，按住以标记"
     }
 ]
 shared.headText: (path, page, lit) ->
