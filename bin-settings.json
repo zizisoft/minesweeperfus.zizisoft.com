@@ -1,0 +1,3 @@
+{
+    "deploy": "git push --all && git push --tags && ssh ubuntu@54.92.67.197 \"sudo killall -u website4 node && sudo -H -u website4 bash -c 'cd /srv/www/minesweeperfus.zizisoft.com && git reset --hard && git pull && git clean -df && npm update && node_modules/site/bin/site build release && (node target/server.main > /dev/null 2>&1 &)'\""
+}
