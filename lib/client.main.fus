@@ -275,19 +275,22 @@ client.onLoad(<>
                     ui.Stack(
                         {
                             horizontal: true
-                            childSpacing: "1.5rem"
+                            childSpacing: "0.5rem"
                         }
                         ui.Text(
                             lit.poweredBy
                             {
+                                pointer: "link"
                                 click: <>
                                     location.href: "http://zizisoft.com/site"
                                 fontSize: 1.3
                             }
                         )
+                        ui.Text("|", {fontSize: 1.3})
                         ui.Text(
                             lit.github
                             {
+                                pointer: "link"
                                 click: <>
                                     location.href: "https://github.com/zizisoft/minesweeperfus.zizisoft.com"
                                 fontSize: 1.3
