@@ -220,7 +220,7 @@ if client.browser.deviceType = "computer" and (
     navigator.vendor = "Google Inc." or navigator.vendor = "Apple Computer, Inc."
 )
     ui.enableAntiFraction()
-ui.setRem(0.018)
+ui.setRem ui.MinRem(0.018)
 
 client.onLoad(<>
     Promise.all[
@@ -492,27 +492,27 @@ client.onLoad(<>
                 bar.setHorizontal(true)
                 if viewportSize.x / viewportSize.y < 0.8
                     if viewportSize.x / viewportSize.y < 0.72
-                        ui.setRem(0.018)
+                        ui.setRem ui.MinRem(0.018)
                     else
-                        ui.setRem(0.013)
+                        ui.setRem ui.MinRem(0.013)
                     ui.root.setWidth(1).setHeight(1)
                     uiBoard.setSize(1, "auto")
                 else
                     ui.root.setWidth("auto").setHeight(1)
-                    ui.setRem(0.01)
+                    ui.setRem ui.MinRem(0.01)
                     uiBoard.setSize("auto", 0.8)
             else
                 ui.root.setHorizontal(true)
                 bar.setHorizontal(false)
                 if viewportSize.x / viewportSize.y > 1.4
                     if viewportSize.x / viewportSize.y > 1.6
-                        ui.setRem(0.018)
+                        ui.setRem ui.MinRem(0.018)
                     else
-                        ui.setRem(0.013)
+                        ui.setRem ui.MinRem(0.013)
                     ui.root.setWidth(1).setHeight(1)
                     uiBoard.setSize("auto", 1)
                 else
-                    ui.setRem(0.01)
+                    ui.setRem ui.MinRem(0.01)
                     ui.root.setWidth(1).setHeight("auto")
                     uiBoard.setSize(0.65, "auto")
         ui.onResize(resizeHandler)
