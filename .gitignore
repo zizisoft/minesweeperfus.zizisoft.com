@@ -11,6 +11,8 @@ Desktop.ini
 # Node
 node_modules
 
+public/.well-known/acme-challenge
+
 *.log
 
 *.pem
