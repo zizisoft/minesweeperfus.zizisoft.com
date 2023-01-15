@@ -1,4 +1,4 @@
-fus 2.4.1
+fus 2.6.0
 import "babel-polyfill"
 import "./shared.manifest" all
 
@@ -19,38 +19,10 @@ server.httpUnixDomainSocket:
         null
     else
         "target/http.sock"
-server.host:
-    if shared.isDebug()
-        fsMod.readFileSync("ip.txt", "utf8").trim()
-    else
-        void
-server.httpPort: 50000
-server.httpsPort: 50001
-server.httpEnabled:
-    if shared.isDebug()
-        false
-    else
-        true
-server.httpsEnabled:
-    if shared.isDebug()
-        true
-    else
-        false
-server.httpsCredential:
-    if shared.isDebug()
-        {
-            pfx: fsMod.readFileSync("credential.p12")
-        }
-    else
-        null
-server.password:
-    if shared.isDebug()
-        fsMod.readFileSync("password.txt", "utf8").trim()
-    else
-        null
-server.debugMustHavePassword: true
-server.behindProxy: shared.isDebug() ? false | true
-server.requestOriginHost: shared.isDebug() ? server.host | null
+server.host: void
+server.httpPort: 3000
+server.httpEnabled: true
+server.httpsEnabled: false
 server.maxRequestBodySize: 65536
 server.homePageAfterScript: "
     <script><![CDATA[
